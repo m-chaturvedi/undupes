@@ -117,7 +117,6 @@ std::string IO::pprint_bytes(size_t bytes) {
       units.begin(), units.end(), PSI{"", bytes},
       [](const PSI &a, const PSI &b) { return a.second < b.second; });
   --it;
-  IC(bytes);
   return fmt::format("{:.2f} {}", static_cast<double>(bytes) / it->second,
                      it->first);
 }
