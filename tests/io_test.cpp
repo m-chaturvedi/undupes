@@ -332,11 +332,11 @@ TEST_F(IOTest, RemoveFileIOTest3) {
 TEST_F(IOTest, PprintBytesTest) {
   // format is rounding off.
   EXPECT_EQ(IO::pprint_bytes(100), "100.00 B");
-  EXPECT_EQ(IO::pprint_bytes(1025), "1.00 KB");
-  EXPECT_EQ(IO::pprint_bytes(1048577), "1.00 MB");
-  EXPECT_EQ(IO::pprint_bytes(1150976), "1.10 MB");
-  EXPECT_EQ(IO::pprint_bytes(1560576), "1.49 MB");
-  EXPECT_EQ(IO::pprint_bytes(2147483648), "2.00 GB");
+  EXPECT_EQ(IO::pprint_bytes(1025), "1.00 KiB");
+  EXPECT_EQ(IO::pprint_bytes(1048577), "1.00 MiB");
+  EXPECT_EQ(IO::pprint_bytes(1150976), "1.10 MiB");
+  EXPECT_EQ(IO::pprint_bytes(1560576), "1.49 MiB");
+  EXPECT_EQ(IO::pprint_bytes(2147483648), "2.00 GiB");
 }
 
 TEST_F(IOTest, ParseInputTest) {

@@ -47,7 +47,8 @@ void add_options(cxxopts::Options &options, int argc, char *argv[]) {
 void check_options() {
   // Summary needs to be passed alone.
   if (cxxopts_results.count("summary") &&
-      (cxxopts_results.count("delete") || cxxopts_results.count("help")))
+      (cxxopts_results.count("delete") || cxxopts_results.count("help") ||
+       cxxopts_results.count("dry-run")))
     throw std::runtime_error("Incompatible options.");
 
   // help needs to be passed alone.
@@ -55,4 +56,12 @@ void check_options() {
       (cxxopts_results.count("delete") || cxxopts_results.count("summary") ||
        cxxopts_results.count("dry-run")))
     throw std::runtime_error("Incompatible options.");
+
+  if (cxxopts_results.count("dry-run")) {
+    if (cxxopts_results["dry-run"].as<std::string>().at(0) == '-') {
+      throw std::runtime_error(
+          "The dry-run option takes an input. Input file name should not start "
+          "with a -.");
+    }
+  }
 }

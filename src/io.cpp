@@ -273,6 +273,7 @@ void remove_files(const FileVector &files,
         of << files.at(i)->dir_entry << std::endl;
     }
     of.close();
+    return;
   }
 
   // Not dry-run and run from cli.

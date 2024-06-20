@@ -44,8 +44,10 @@ int main(int argc, char *argv[]) {
   try {
     add_options(options, argc, argv);
   } catch (std::runtime_error &exp) {
-    if (std::string(exp.what()) == "Incompatible options.") {
-      std::cout << "Incompatible options." << std::endl;
+    std::string exp_string = std::string(exp.what());
+    if (exp_string == "Incompatible options." ||
+        exp_string.starts_with("The dry-run option takes an input.")) {
+      std::cout << exp.what() << std::endl;
       exit(1);
     } else
       throw exp;
