@@ -1,4 +1,5 @@
 import subprocess
+import os
 import tempfile
 import json
 import sys
@@ -8,7 +9,7 @@ from pprint import pprint
 from typing import collections
 
 USE_FD = False
-prog_name = "jdupes -z"
+prog_name = os.getenv("PROG_NAME", "jdupes -z")
 #  prog_name = "fdupes"
 
 
@@ -47,7 +48,8 @@ def get_undupes_output(path="."):
 
     file_sets = []
 
-    if not json_output: return file_sets
+    if not json_output:
+        return file_sets
 
     for ele in json_output:
         if ele["file_list"]:

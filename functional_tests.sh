@@ -26,7 +26,7 @@ function summary_test() {
 	diff ${TMP_DIR}/b.txt tests/artifacts/functional_test/expected_dir_3_summary.txt
 }
 
-function test_with_fdupes() {
+function test_with_j_f_dupes() {
 	declare -a DIRS_TO_CHECK=(
 		${PWD}
 		$HOME/Downloads
@@ -36,12 +36,18 @@ function test_with_fdupes() {
 	)
 
 	for dir_name in ${DIRS_TO_CHECK[@]}; do
-		[[ -d $dir_name ]] && python3 test_with_fdupes.py $dir_name | grep 'Perfect Match!'
+		if [[ -d $dir_name ]]; then
+			# Checks with jdupes
+			python3 test_with_fdupes.py $dir_name | grep 'Perfect Match!'
+			# Checkes with fdupes
+			PROG_NAME="fdupes" python3 test_with_fdupes.py $dir_name | grep 'Perfect Match!'
+		fi
+
 	done
 }
 
 vanilla_test
 summary_test
-test_with_fdupes
+test_with_j_f_dupes
 
 echo "Tests passed."
