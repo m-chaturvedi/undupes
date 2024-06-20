@@ -12,10 +12,16 @@ target_link_libraries(filter_test GTest::gtest_main filter file filters_list
                       bin_compare_files)
 target_link_libraries(bin_compare_files_test GTest::gtest_main
                       bin_compare_files)
-target_link_libraries(filters_list_test GTest::gtest_main
-                      filters_list file)
+target_link_libraries(filters_list_test GTest::gtest_main filters_list file)
 
-target_link_libraries(io_test GTest::gtest_main io file filter filters_list cli)
+target_link_libraries(
+  io_test
+  GTest::gtest_main
+  io
+  file
+  filter
+  filters_list
+  cli)
 
 include(GoogleTest)
 gtest_discover_tests(file_test)

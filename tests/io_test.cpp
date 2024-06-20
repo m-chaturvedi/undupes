@@ -17,16 +17,16 @@ extern bool dry_run;
 extern bool processing_done;
 using namespace std;
 class IOTest : public testing::Test {
- protected:
+protected:
   // Remember that SetUp() is run immediately before a test starts.
   void SetUp() override {
     iota(expected_file_list.begin(), expected_file_list.end(), 1);
     read_dir("artifacts/dir_2", file_sets_dir_2);
     read_dir("artifacts/dir_3", file_sets_dir_3);
 
-    fs::copy(
-        "artifacts/dir_3", "/tmp/dir_3.copy",
-        fs::copy_options::overwrite_existing | fs::copy_options::recursive);
+    fs::copy("artifacts/dir_3", "/tmp/dir_3.copy",
+             fs::copy_options::overwrite_existing |
+                 fs::copy_options::recursive);
     auto ms = [](std::string file_name) {
       return std::make_shared<File>("artifacts/dir_3/" + file_name);
     };
@@ -63,9 +63,9 @@ class IOTest : public testing::Test {
 
   // TearDown() is invoked immediately after a test finishes.
   void TearDown() override {
-    fs::copy(
-        "/tmp/dir_3.copy", "artifacts/dir_3",
-        fs::copy_options::overwrite_existing | fs::copy_options::recursive);
+    fs::copy("/tmp/dir_3.copy", "artifacts/dir_3",
+             fs::copy_options::overwrite_existing |
+                 fs::copy_options::recursive);
   }
   // https://stackoverflow.com/a/39560347/873956
   vector<int> expected_file_list = std::vector<int>(10);
@@ -340,31 +340,30 @@ TEST_F(IOTest, PprintBytesTest) {
 }
 
 TEST_F(IOTest, ParseInputTest) {
-  string input =
-      "artifacts/dir_2\0"
-      "artifacts/dir_2/4KB_3\0"
-      "artifacts/dir_2/3KB_3\0"
-      "artifacts/dir_2/1KB_3\0"
-      "artifacts/dir_2/3KB_2\0"
-      "artifacts/dir_2/1KB_1\0"
-      "artifacts/dir_2/4KB_1\0"
-      "artifacts/dir_2/3KB_4\0"
-      "artifacts/dir_2/5KB_1\0"
-      "artifacts/dir_2/2KB_3\0"
-      "artifacts/dir_2/5KB_3\0"
-      "artifacts/dir_2/4KB_5\0"
-      "artifacts/dir_2/3KB_1\0"
-      "artifacts/dir_2/1KB_4\0"
-      "artifacts/dir_2/5KB_4\0"
-      "artifacts/dir_2/2KB_4\0"
-      "artifacts/dir_2/5KB_5\0"
-      "artifacts/dir_2/4KB_2\0"
-      "artifacts/dir_2/1KB_5\0"
-      "artifacts/dir_2/3KB_5\0"
-      "artifacts/dir_2/2KB_1\0"
-      "artifacts/dir_2/4KB_4\0"
-      "artifacts/dir_2/2KB_5\0"
-      "artifacts/dir_2/5KB_2\0"
-      "artifacts/dir_2/2KB_2\0"
-      "artifacts/dir_2/1KB_2\0";
+  string input = "artifacts/dir_2\0"
+                 "artifacts/dir_2/4KB_3\0"
+                 "artifacts/dir_2/3KB_3\0"
+                 "artifacts/dir_2/1KB_3\0"
+                 "artifacts/dir_2/3KB_2\0"
+                 "artifacts/dir_2/1KB_1\0"
+                 "artifacts/dir_2/4KB_1\0"
+                 "artifacts/dir_2/3KB_4\0"
+                 "artifacts/dir_2/5KB_1\0"
+                 "artifacts/dir_2/2KB_3\0"
+                 "artifacts/dir_2/5KB_3\0"
+                 "artifacts/dir_2/4KB_5\0"
+                 "artifacts/dir_2/3KB_1\0"
+                 "artifacts/dir_2/1KB_4\0"
+                 "artifacts/dir_2/5KB_4\0"
+                 "artifacts/dir_2/2KB_4\0"
+                 "artifacts/dir_2/5KB_5\0"
+                 "artifacts/dir_2/4KB_2\0"
+                 "artifacts/dir_2/1KB_5\0"
+                 "artifacts/dir_2/3KB_5\0"
+                 "artifacts/dir_2/2KB_1\0"
+                 "artifacts/dir_2/4KB_4\0"
+                 "artifacts/dir_2/2KB_5\0"
+                 "artifacts/dir_2/5KB_2\0"
+                 "artifacts/dir_2/2KB_2\0"
+                 "artifacts/dir_2/1KB_2\0";
 }

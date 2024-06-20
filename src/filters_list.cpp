@@ -1,17 +1,17 @@
 #define XXH_PRIVATE_API 0
 #include "filters_list.h"
 
-#include <stdint.h>  // for uint64_t
-#include <stdlib.h>  // for free, malloc
+#include <stdint.h> // for uint64_t
+#include <stdlib.h> // for free, malloc
 #include <unordered_set>
-#include <xxhash.h>  // for XXH_INLINE_XXH3_128bits_digest
+#include <xxhash.h> // for XXH_INLINE_XXH3_128bits_digest
 
-#include <exception>   // for exception
-#include <filesystem>  // for file_size, directory_entry
-#include <iostream>    // for operator<<, basic_ostream, cout
+#include <exception>  // for exception
+#include <filesystem> // for file_size, directory_entry
+#include <iostream>   // for operator<<, basic_ostream, cout
 
-#include "debug.h"   // for error, format, vformat_to, format...
-#include "filter.h"  // for FilePtr
+#include "debug.h"  // for error, format, vformat_to, format...
+#include "filter.h" // for FilePtr
 
 namespace fs = std::filesystem;
 
@@ -97,7 +97,8 @@ bool FiltersList::is_subdirectory(const std::filesystem::path &p1,
   IC(p1_abs, p2_abs);
   for (it1 = p1_abs.begin(), it2 = p2_abs.begin();
        it1 != p1_abs.end() && it2 != p2_abs.end(); ++it1, ++it2) {
-    if (*it1 != *it2) return false;
+    if (*it1 != *it2)
+      return false;
   }
   return it1 == p1_abs.end();
   ;
@@ -154,4 +155,3 @@ void FiltersList::keep_remove_filter(
   matching_sets = std::vector<size_t>(S.begin(), S.end());
   std::sort(matching_sets.begin(), matching_sets.end());
 }
-

@@ -23,7 +23,6 @@ void remove_file_io(const FileSets &file_sets, KeepFileSets &keep_file_sets,
 void get_matches(const std::regex &reg, const std::string &S,
                  std::vector<std::string> &result);
 
-
 void print_summary(const FileSets &resulting_file_sets);
 void parse_file_list(std::string orig_string, std::vector<int> &file_list,
                      const int max_file_number);

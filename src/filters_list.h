@@ -1,10 +1,10 @@
 #pragma once
-#include <stdio.h>  // for size_t
+#include <stdio.h> // for size_t
 
-#include <filesystem>  // for filesystem
-#include <string>      // for string
+#include <filesystem> // for filesystem
+#include <string>     // for string
 
-#include "filter.h"  // for FilePtr
+#include "filter.h" // for FilePtr
 
 namespace fs = std::filesystem;
 
@@ -24,4 +24,4 @@ void keep_remove_filter(const FileSets &input_file_sets,
 
 bool check_filters(const std::vector<std::string> &keep_filters,
                    const std::vector<std::string> &remove_filters);
-}  // namespace FiltersList
+} // namespace FiltersList

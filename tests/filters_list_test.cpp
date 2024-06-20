@@ -1,17 +1,17 @@
-#include "filters_list.h"  // for xxhash, fs, file_size
+#include "filters_list.h" // for xxhash, fs, file_size
 
-#include <gtest/gtest.h>  // for TestInfo (ptr only), EXPECT_EQ, TEST_F
+#include <gtest/gtest.h> // for TestInfo (ptr only), EXPECT_EQ, TEST_F
 
-#include <string>
 #include <exception>
-#include <filesystem>  // for recursive_directory_iterator, begin
-#include <ostream>     // for operator<<
+#include <filesystem> // for recursive_directory_iterator, begin
+#include <ostream>    // for operator<<
+#include <string>
 
 #include "debug.h"
 
 using namespace std;
 class FiltersListTest : public testing::Test {
- protected:
+protected:
   // Remember that SetUp() is run immediately before a test starts.
   void SetUp() override {}
 
@@ -48,4 +48,3 @@ TEST_F(FiltersListTest, IsSubdirectoryTest) {
     FAIL() << "Different exception than expected caught";
   }
 }
-

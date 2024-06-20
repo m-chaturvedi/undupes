@@ -30,9 +30,11 @@ void apply_three_common_filters(const FileSets &file_sets, FileSets &result,
   Filter filter_4{filter_3.new_file_sets, compare_files_fdupes, false};
   auto t2 = high_resolution_clock::now();
   // duration<double, std::milli> ms_double = t2 - t1;
-  if (print) IO::print_json(filter_4.new_file_sets);
+  if (print)
+    IO::print_json(filter_4.new_file_sets);
 #else
-  if (print) IO::print_json(filter_2.new_file_sets);
+  if (print)
+    IO::print_json(filter_2.new_file_sets);
 #endif
   result = std::move(filter_3.new_file_sets);
 }
@@ -55,7 +57,8 @@ int main(int argc, char *argv[]) {
   FileSets input_file_sets, resulting_file_sets;
   IO::parse_input(input_file_sets);
 
-  if (cxxopts_results.count("dry-run")) dry_run = true;
+  if (cxxopts_results.count("dry-run"))
+    dry_run = true;
 
   if (cxxopts_results.count("delete")) {
     apply_three_common_filters(input_file_sets, resulting_file_sets, false);

@@ -46,8 +46,8 @@ void add_options(cxxopts::Options &options, int argc, char *argv[]) {
  */
 void check_options() {
   // Summary needs to be passed alone.
-  if (cxxopts_results.count("summary") && (cxxopts_results.count("delete") ||
-      cxxopts_results.count("help")))
+  if (cxxopts_results.count("summary") &&
+      (cxxopts_results.count("delete") || cxxopts_results.count("help")))
     throw std::runtime_error("Incompatible options.");
 
   // help needs to be passed alone.
