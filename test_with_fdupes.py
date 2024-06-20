@@ -48,7 +48,7 @@ def get_undupes_output(path="."):
     file_sets = []
 
     if not json_output: return file_sets
-    
+
     for ele in json_output:
         if ele["file_list"]:
             ele_list = ele["file_list"]
