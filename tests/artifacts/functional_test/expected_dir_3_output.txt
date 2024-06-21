@@ -1,0 +1,26 @@
+[
+  "tests/artifacts/dir_3/4KB_1",
+  "tests/artifacts/dir_3/4KB_1.copy.1",
+  "tests/artifacts/dir_3/4KB_1.copy.2",
+  "tests/artifacts/dir_3/4KB_1.copy.3",
+  "tests/artifacts/dir_3/4KB_1.copy.4",
+  "tests/artifacts/dir_3/4KB_1.copy.5"
+]
+[
+  "tests/artifacts/dir_3/3KB_1",
+  "tests/artifacts/dir_3/3KB_1.copy.1",
+  "tests/artifacts/dir_3/3KB_1.copy.2",
+  "tests/artifacts/dir_3/3KB_1.copy.3"
+]
+[
+  "tests/artifacts/dir_3/1KB_2",
+  "tests/artifacts/dir_3/1KB_2.copy.1",
+  "tests/artifacts/dir_3/1KB_2.copy.2",
+  "tests/artifacts/dir_3/1KB_2.copy.3"
+]
+[
+  "tests/artifacts/dir_3/1KB_1",
+  "tests/artifacts/dir_3/1KB_1.copy.1",
+  "tests/artifacts/dir_3/1KB_1.copy.2",
+  "tests/artifacts/dir_3/1KB_1.copy.3"
+]

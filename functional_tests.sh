@@ -2,6 +2,7 @@
 set -euo pipefail
 
 TMP_DIR=$(mktemp -d /tmp/func_test-XXXXX)
+export TMP_DIR
 
 function cleanup() {
 	declare -i ret_code=$?
@@ -54,15 +55,13 @@ function delete_test() {
 	# remove 1KB_1.copy.1 1_KB_1.copy.3 1KB_2.copy.3 3KB_1.copy.2 all 4KB_1
 	cp -R tests/artifacts/dir_3 ${TMP_DIR}
 
-	export TMP_DIR
-
 	# TODO: Read up.
 	# https://stackoverflow.com/questions/20532195/socat-with-a-virtual-tty-link-and-fork-removes-my-pty-link
 	cat tests/artifacts/functional_test/expected_dir_3_delete_1.in |
 		socat stdio exec:'bash -x tests/artifacts/functional_test/delete_script.sh',pty,setsid,echo=0
 
 	pushd ${TMP_DIR}/dir_3
-	declare -a DOES_NOT_EXIST=(1KB_1.copy.1 1_KB_1.copy.3 1KB_2.copy.3 3KB_1.copy.2
+	declare -a DOES_NOT_EXIST=(1KB_1.copy.1 1KB_1.copy.3 1KB_2.copy.3 3KB_1.copy.2
 		4KB_1 4KB_1.copy.1 4KB_1.copy.2 4KB_1.copy.3 4KB_1.copy.4 4KB_1.copy.5)
 
 	declare -a EXISTS=(1KB_1 1KB_1.copy.2 1KB_2 1KB_2.copy.1 1KB_2.copy.2 1KB_3 1KB_4 1KB_5 3KB_1 3KB_1.copy.1 3KB_1.copy.3 3KB_2 4KB_4)
@@ -79,15 +78,32 @@ function delete_test() {
 
 	cp -R tests/artifacts/dir_3 ${TMP_DIR}
 	pushd ${TMP_DIR}
-	find . -type f -print0 | ${UNDUPE} > ${TMP_DIR}/dir_3_op.json
+	find . -type f -print0 | ${UNDUPE} >${TMP_DIR}/dir_3_op.json
 	popd
 	diff ${TMP_DIR}/dir_3_op.json tests/artifacts/functional_test/expected_dir_3.json
-	diff <( ls -1 tests/artifacts/dir_3 ) <( ls -1 ${TMP_DIR}/dir_3 )
+	diff <(ls -1 tests/artifacts/dir_3) <(ls -1 ${TMP_DIR}/dir_3)
+}
+
+function dry_run_test() {
+	cp -R tests/artifacts/dir_3 ${TMP_DIR}
+	declare -a DOES_NOT_EXIST=(1KB_1.copy.1 1KB_1.copy.3 1KB_2.copy.3 3KB_1.copy.2
+		4KB_1 4KB_1.copy.1 4KB_1.copy.2 4KB_1.copy.3 4KB_1.copy.4 4KB_1.copy.5)
+
+	cat tests/artifacts/functional_test/expected_dir_3_delete_1.in |
+		socat stdio exec:'bash -x tests/artifacts/functional_test/delete_script_dry_run.sh',pty,setsid,echo=0
+
+	for f in ${DOES_NOT_EXIST[@]}; do
+		echo "\"${TMP_DIR}/dir_3/$f\"" >>${TMP_DIR}/expected_dry_run.out
+	done
+
+	diff <(cat ${TMP_DIR}/dry_run.out | sort) <(cat ${TMP_DIR}/expected_dry_run.out | sort)
+	diff <(ls -1 tests/artifacts/dir_3) <(ls -1 ${TMP_DIR}/dir_3)
 }
 
 vanilla_test
 summary_test
 test_with_j_f_dupes
 delete_test
+dry_run_test
 
 echo "Tests passed."

@@ -261,21 +261,18 @@ void show_file_list(const FileVector &files,
  * @param keep_files A vector of booleans which indicates whether a file should
  * be kept or deleted.  true for keeping and false for deleting.
  */
-void remove_files(const FileVector &files,
-                  const std::vector<bool> &keep_files) {
+void remove_files(const FileVector &files, const std::vector<bool> &keep_files,
+                  std::ofstream &of) {
   // dry_run but not run from cli.
   if (dry_run && cxxopts_results.count("dry-run") == 0)
     return;
 
   // dry_run and run from cli.
   if (dry_run && cxxopts_results.count("dry-run") > 0) {
-    std::string output_file = cxxopts_results["dry-run"].as<std::string>();
-    std::ofstream of{output_file, std::ios::out};
     for (size_t i = 0; i < files.size(); ++i) {
       if (!keep_files.at(i))
         of << files.at(i)->dir_entry << std::endl;
     }
-    of.close();
     return;
   }
 
@@ -312,6 +309,13 @@ void IO::remove_file_io(const FileSets &file_sets, KeepFileSets &keep_file_sets,
   std::ofstream tty_out(output_dev);
   std::cout.rdbuf(tty_out.rdbuf());
 
+  std::ofstream of;
+  // TODO: Handle signals and close this.
+  if (dry_run && cxxopts_results.count("dry-run") > 0) {
+    std::string output_file = cxxopts_results["dry-run"].as<std::string>();
+    of = std::ofstream{output_file, std::ios::out};
+  }
+
   std::cout << "\n"; // Make sure that the animation doesn't interfere.
   for (size_t i = 0; i < file_sets.size(); ++i) {
     show_file_list(file_sets.at(i), keep_file_sets.at(i));
@@ -328,7 +332,7 @@ void IO::remove_file_io(const FileSets &file_sets, KeepFileSets &keep_file_sets,
         sanitize_and_check_input(files_to_keep_str, keep_file_sets.at(i));
         std::cout << "\n";
         show_file_list(file_sets.at(i), keep_file_sets.at(i), "    ");
-        remove_files(file_sets.at(i), keep_file_sets.at(i));
+        remove_files(file_sets.at(i), keep_file_sets.at(i), of);
         std::cout << "\n\n";
         break;
       } catch (const std::runtime_error &exp) {
@@ -339,6 +343,7 @@ void IO::remove_file_io(const FileSets &file_sets, KeepFileSets &keep_file_sets,
   }
   std::cin.rdbuf(cin_backup);
   std::cout.rdbuf(cout_backup);
+  of.close();
 }
 
 /**

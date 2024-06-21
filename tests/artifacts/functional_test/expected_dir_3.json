@@ -1,0 +1,36 @@
+[
+    {
+        "file_list": [
+            "./dir_3/3KB_1.copy.1",
+            "./dir_3/3KB_1",
+            "./dir_3/3KB_1.copy.3",
+            "./dir_3/3KB_1.copy.2"
+        ]
+    },
+    {
+        "file_list": [
+            "./dir_3/4KB_1.copy.1",
+            "./dir_3/4KB_1.copy.4",
+            "./dir_3/4KB_1.copy.3",
+            "./dir_3/4KB_1",
+            "./dir_3/4KB_1.copy.5",
+            "./dir_3/4KB_1.copy.2"
+        ]
+    },
+    {
+        "file_list": [
+            "./dir_3/1KB_2.copy.2",
+            "./dir_3/1KB_2.copy.3",
+            "./dir_3/1KB_2.copy.1",
+            "./dir_3/1KB_2"
+        ]
+    },
+    {
+        "file_list": [
+            "./dir_3/1KB_1.copy.3",
+            "./dir_3/1KB_1.copy.1",
+            "./dir_3/1KB_1",
+            "./dir_3/1KB_1.copy.2"
+        ]
+    }
+]
