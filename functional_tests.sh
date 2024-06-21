@@ -15,6 +15,7 @@ trap 'cleanup' EXIT
 
 declare -r UNDUPE=${PWD}/build/src/undupe
 export UNDUPE
+declare -r ORIG_DIR=${PWD}
 
 function vanilla_test() {
 	find tests/artifacts/dir_3 -type f -print0 | sort -z | ./build/src/undupe |
@@ -55,6 +56,8 @@ function delete_test() {
 
 	export TMP_DIR
 
+	# TODO: Read up.
+	# https://stackoverflow.com/questions/20532195/socat-with-a-virtual-tty-link-and-fork-removes-my-pty-link
 	cat tests/artifacts/functional_test/expected_dir_3_delete_1.in |
 		socat stdio exec:'bash -x tests/artifacts/functional_test/delete_script.sh',pty,setsid,echo=0
 
@@ -74,6 +77,12 @@ function delete_test() {
 
 	popd
 
+	cp -R tests/artifacts/dir_3 ${TMP_DIR}
+	pushd ${TMP_DIR}
+	find . -type f -print0 | ${UNDUPE} > ${TMP_DIR}/dir_3_op.json
+	popd
+	diff ${TMP_DIR}/dir_3_op.json tests/artifacts/functional_test/expected_dir_3.json
+	diff <( ls -1 tests/artifacts/dir_3 ) <( ls -1 ${TMP_DIR}/dir_3 )
 }
 
 vanilla_test
