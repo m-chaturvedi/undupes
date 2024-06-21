@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# g++ -g main_threaded.cpp -lxxhash -lpthread -DTHREADED=0 -o seq
-#
-# g++ -g main_threaded.cpp -lxxhash -lpthread -DTHREADED=1 -o parallel
-
 SOURCE_DIR=$PWD
-BUILD_DIR=$PWD/build
+BUILD_DIR=${BUILD_DIR:-$PWD/build}
 INSTALL_DIR=$PWD/build/install
 CUSTOM_TYPE="${CUSTOM_TYPE:-}"
 BUILD_TYPE="${BUILD_TYPE:-Release}"
@@ -30,6 +26,14 @@ elif [[ $CUSTOM_TYPE = "tsan" ]]; then
 		-DCMAKE_C_FLAGS="-fsanitize=thread"
 		-DCMAKE_EXE_LINKER_FLAGS="-fsanitize=thread"
 		-DCMAKE_MODULE_LINKER_FLAGS="-fsanitize=thread"
+	)
+elif [[ $CUSTOM_TYPE = "asan" ]]; then
+	BUILD_TYPE="DEBUG"
+	ADDITIONAL_CMAKE_FLAGS=(
+		-DCMAKE_CXX_FLAGS="-fsanitize=address"
+		-DCMAKE_C_FLAGS="-fsanitize=address"
+		-DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address"
+		-DCMAKE_MODULE_LINKER_FLAGS="-fsanitize=address"
 	)
 fi
 
