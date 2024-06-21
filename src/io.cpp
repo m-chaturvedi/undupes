@@ -72,6 +72,9 @@ done:
   std::cout << "\b " << std::flush;
 }
 
+/**
+ * @brief This ends the cursor animation.
+ */
 void IO::end_animation() {
   {
     const std::lock_guard<std::mutex> lock(animation_mutex);
