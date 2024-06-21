@@ -1,5 +1,11 @@
-.ccls-cache/
-.vscode/
-build/
-compile_commands.json
+/.ccls-cache/
+/.vscode/
+/build*/
+/compile_commands.json
 *.swp
+/__pycache__/
+/Testing/
+/gmon.out
+/include-what-you-use.txt
+/cppcheck.txt
+gitignore_me_*
