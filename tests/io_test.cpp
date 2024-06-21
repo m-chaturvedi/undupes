@@ -97,8 +97,7 @@ void delete_files(FileSets &resulting_file_sets,
         "io/remove_file_io_test_" + std::to_string(j) + ".out";
 
     std::string op_name = "op_test_" + std::to_string(j) + ".out";
-    IO::remove_file_io(resulting_file_sets, kps, in_file,
-                       op_name);
+    IO::remove_file_io(resulting_file_sets, kps, in_file, op_name);
     bool ret = files_eq(op_name, out_file);
     if (dry_run) {
       IC(out_file);
