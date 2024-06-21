@@ -99,6 +99,8 @@ void IO::parse_input(FileSets &initial_file_sets, std::set<FileType> accepted) {
     FilePtr f = std::make_shared<File>(File{line});
     if (accepted.find(f->get_file_type()) != accepted.end())
       file_vector.emplace_back(f);
+    else
+      spdlog::warn("Path not a file or a symlink to one: {}", f->get_path());
   }
   initial_file_sets.emplace_back(file_vector);
   num_files = initial_file_sets.at(0).size();

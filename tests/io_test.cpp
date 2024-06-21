@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <fstream>
 #include <numeric>
+#include <regex>
 #include <string>
 
 #include "debug.h"
@@ -16,6 +17,7 @@ extern bool dry_run;
 
 extern bool processing_done;
 using namespace std;
+
 class IOTest : public testing::Test {
 protected:
   // Remember that SetUp() is run immediately before a test starts.
@@ -66,6 +68,7 @@ protected:
     fs::copy("/tmp/dir_3.copy", "artifacts/dir_3",
              fs::copy_options::overwrite_existing |
                  fs::copy_options::recursive);
+    std::filesystem::remove("spdlog.txt");
   }
   // https://stackoverflow.com/a/39560347/873956
   vector<int> expected_file_list = std::vector<int>(10);
@@ -80,6 +83,8 @@ protected:
     _file_sets.emplace_back(file_vector);
   }
   FileSets file_sets_dir_2, file_sets_dir_3, resulting_file_sets;
+
+  std::shared_ptr<spdlog::logger> prev_logger;
 };
 
 bool files_eq(const string &A, const string &B);
@@ -100,7 +105,6 @@ void delete_files(FileSets &resulting_file_sets,
     IO::remove_file_io(resulting_file_sets, kps, in_file, op_name);
     bool ret = files_eq(op_name, out_file);
     if (dry_run) {
-      IC(out_file);
       EXPECT_TRUE(ret);
     }
   }
@@ -330,30 +334,77 @@ TEST_F(IOTest, PprintBytesTest) {
 }
 
 TEST_F(IOTest, ParseInputTest) {
-  string input = "artifacts/dir_2\0"
-                 "artifacts/dir_2/4KB_3\0"
-                 "artifacts/dir_2/3KB_3\0"
-                 "artifacts/dir_2/1KB_3\0"
-                 "artifacts/dir_2/3KB_2\0"
-                 "artifacts/dir_2/1KB_1\0"
-                 "artifacts/dir_2/4KB_1\0"
-                 "artifacts/dir_2/3KB_4\0"
-                 "artifacts/dir_2/5KB_1\0"
-                 "artifacts/dir_2/2KB_3\0"
-                 "artifacts/dir_2/5KB_3\0"
-                 "artifacts/dir_2/4KB_5\0"
-                 "artifacts/dir_2/3KB_1\0"
-                 "artifacts/dir_2/1KB_4\0"
-                 "artifacts/dir_2/5KB_4\0"
-                 "artifacts/dir_2/2KB_4\0"
-                 "artifacts/dir_2/5KB_5\0"
-                 "artifacts/dir_2/4KB_2\0"
-                 "artifacts/dir_2/1KB_5\0"
-                 "artifacts/dir_2/3KB_5\0"
-                 "artifacts/dir_2/2KB_1\0"
-                 "artifacts/dir_2/4KB_4\0"
-                 "artifacts/dir_2/2KB_5\0"
-                 "artifacts/dir_2/5KB_2\0"
-                 "artifacts/dir_2/2KB_2\0"
-                 "artifacts/dir_2/1KB_2\0";
+  // Output of:
+  // find artifacts/ -type f,l,d -print0 > ./io/parse_input.in
+  FileSets file_sets;
+  auto F = [](const std::string &s) { return std::make_shared<File>(s); };
+
+  // Directories or broken symlinks or symlinks to directories.
+  FileVector to_remove = {
+      F("artifacts/"),
+      F("artifacts/symlink_3"),
+      F("artifacts/dir_3"),
+      F("artifacts/broken_symlink_1"),
+      F("artifacts/dir_2"),
+      F("artifacts/dir_1"),
+      F("artifacts/functional_test"),
+      F("artifacts/nested_broken_symlink_1"),
+      F("artifacts/dir_4"),
+      F("artifacts/dir_4/ab"),
+      F("artifacts/dir_4/ab/c"),
+      F("artifacts/dir_4/a"),
+      F("artifacts/dir_4/a/d"),
+  };
+
+  auto cin_buff = std::cin.rdbuf();
+  std::ifstream tty_in("io/parse_input.in");
+  std::cin.rdbuf(tty_in.rdbuf());
+
+  {
+    std::shared_ptr<spdlog::logger> bt_spdlog =
+        spdlog::basic_logger_mt("basic_logger", "spdlog.txt");
+    prev_logger = spdlog::default_logger();
+    spdlog::flush_on(spdlog::level::warn);
+    spdlog::set_default_logger(bt_spdlog);
+    // redirecting stdout to a file doesn't work.
+    IO::parse_input(file_sets);
+    IO::end_animation();
+    std::cin.rdbuf(cin_buff);
+    tty_in.close();
+    spdlog::set_default_logger(prev_logger);
+  }
+
+  ifstream spdlog_file{"spdlog.txt", std::ios::in};
+  EXPECT_TRUE(spdlog_file.is_open());
+
+  std::smatch sm;
+  std::string line;
+  FileVector logged_files;
+
+  sleep(1);
+  while (std::getline(spdlog_file, line, '\n')) {
+    auto res = std::regex_search(
+        line, sm,
+        std::regex{
+            R"(\[\S+ \S+\] \[basic_logger\] \[warning\] Path not a file or a symlink to one: (\S+))"});
+
+    EXPECT_TRUE(res && sm[1].matched);
+    logged_files.emplace_back(std::make_shared<File>(sm.str(1)));
+  }
+  EXPECT_EQ(logged_files, to_remove);
+  std::filesystem::remove("spdlog.txt");
+
+  FileSets artifacts_file_sets;
+  read_dir("artifacts", artifacts_file_sets);
+  EXPECT_NE(file_sets, artifacts_file_sets);
+
+  EXPECT_EQ(artifacts_file_sets.size(), 1);
+  FileVector fv = artifacts_file_sets.at(0);
+
+  std::erase_if(fv, [to_remove](const FilePtr &a) {
+    return std::find(to_remove.begin(), to_remove.end(), a) != to_remove.end();
+  });
+  artifacts_file_sets.clear();
+  artifacts_file_sets.push_back(fv);
+  EXPECT_EQ(file_sets, artifacts_file_sets);
 }
