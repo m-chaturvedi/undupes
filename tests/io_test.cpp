@@ -96,9 +96,10 @@ void delete_files(FileSets &resulting_file_sets,
     std::string out_file =
         "io/remove_file_io_test_" + std::to_string(j) + ".out";
 
+    std::string op_name = "op_test_" + std::to_string(j) + ".out";
     IO::remove_file_io(resulting_file_sets, kps, in_file,
-                       "gitignore_output.txt");
-    bool ret = files_eq("gitignore_output.txt", out_file);
+                       op_name);
+    bool ret = files_eq(op_name, out_file);
     if (dry_run) {
       IC(out_file);
       EXPECT_TRUE(ret);
@@ -215,16 +216,6 @@ TEST_F(IOTest, SanitizeAndCheckInputTest) {
 
   IO::sanitize_and_check_input("n", keep_file_list);
   EXPECT_EQ(keep_file_list, vector<bool>(10, false));
-
-  keep_file_list = {0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
-  IO::sanitize_and_check_input("preselected", keep_file_list);
-  L = {0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
-  EXPECT_EQ(keep_file_list, L);
-
-  keep_file_list = {0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
-  IO::sanitize_and_check_input("p", keep_file_list);
-  L = {0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
-  EXPECT_EQ(keep_file_list, L);
 
   IO::sanitize_and_check_input("1,2,3", keep_file_list);
   L = {1, 1, 1, 0, 0, 0, 0, 0, 0, 0};

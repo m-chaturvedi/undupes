@@ -223,8 +223,6 @@ void IO::sanitize_and_check_input(const std::string &str,
     std::fill(keep_file_list.begin(), keep_file_list.end(), true);
   } else if (str == "none" || str == "n")
     std::fill(keep_file_list.begin(), keep_file_list.end(), false);
-  else if (str == "preselected" || str == "p")
-    ;
   else {
     std::vector<int> file_list;
     IO::parse_file_list(str, file_list, set_size);
@@ -319,7 +317,7 @@ void IO::remove_file_io(const FileSets &file_sets, KeepFileSets &keep_file_sets,
   std::cout << "\n"; // Make sure that the animation doesn't interfere.
   for (size_t i = 0; i < file_sets.size(); ++i) {
     show_file_list(file_sets.at(i), keep_file_sets.at(i));
-    std::string options = "[n]one, [a]ll, [p]reselected.";
+    std::string options = "[n]one, [a]ll.";
     std::cout << fmt::format(
         "\nSpecify comma or dash separated values for files to "
         "keep (ex: 1,2,3-4). {}\n",

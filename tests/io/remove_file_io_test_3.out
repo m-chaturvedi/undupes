@@ -4,7 +4,7 @@
 [+] [3] artifacts/dir_3/1KB_1.copy.2
 [+] [4] artifacts/dir_3/1KB_1.copy.3
 
-Specify comma or dash separated values for files to keep (ex: 1,2,3-4). [n]one, [a]ll, [p]reselected.
+Specify comma or dash separated values for files to keep (ex: 1,2,3-4). [n]one, [a]ll.
 >>> 
     [-] [1] artifacts/dir_3/1KB_1
     [-] [2] artifacts/dir_3/1KB_1.copy.1
@@ -17,7 +17,7 @@ Specify comma or dash separated values for files to keep (ex: 1,2,3-4). [n]one, 
 [+] [3] artifacts/dir_3/1KB_2.copy.2
 [+] [4] artifacts/dir_3/1KB_2.copy.3
 
-Specify comma or dash separated values for files to keep (ex: 1,2,3-4). [n]one, [a]ll, [p]reselected.
+Specify comma or dash separated values for files to keep (ex: 1,2,3-4). [n]one, [a]ll.
 >>> Unexpected input.  Try again.
 >>> Unexpected input.  Try again.
 >>> Unexpected input.  Try again.
@@ -33,7 +33,7 @@ Specify comma or dash separated values for files to keep (ex: 1,2,3-4). [n]one, 
 [+] [3] artifacts/dir_3/3KB_1.copy.2
 [+] [4] artifacts/dir_3/3KB_1.copy.3
 
-Specify comma or dash separated values for files to keep (ex: 1,2,3-4). [n]one, [a]ll, [p]reselected.
+Specify comma or dash separated values for files to keep (ex: 1,2,3-4). [n]one, [a]ll.
 >>> 
     [+] [1] artifacts/dir_3/3KB_1
     [-] [2] artifacts/dir_3/3KB_1.copy.1
@@ -48,7 +48,7 @@ Specify comma or dash separated values for files to keep (ex: 1,2,3-4). [n]one, 
 [+] [5] artifacts/dir_3/4KB_1.copy.4
 [+] [6] artifacts/dir_3/4KB_1.copy.5
 
-Specify comma or dash separated values for files to keep (ex: 1,2,3-4). [n]one, [a]ll, [p]reselected.
+Specify comma or dash separated values for files to keep (ex: 1,2,3-4). [n]one, [a]ll.
 >>> 
     [+] [1] artifacts/dir_3/4KB_1
     [+] [2] artifacts/dir_3/4KB_1.copy.1
