@@ -17,7 +17,6 @@ protected:
 
   // TearDown() is invoked immediately after a test finishes.
   void TearDown() override {}
-  void read_dir(const std::string &dir, FileSets &_file_sets){};
 };
 
 TEST_F(FiltersListTest, IsSubdirectoryTest) {

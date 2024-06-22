@@ -4,6 +4,7 @@
 
 #include "bin_compare_files.h"
 #include "cli.h"
+#include "debug.h"
 #include "filter.h"
 #include "filters_list.h"
 #include "io.h"
@@ -29,17 +30,17 @@ void apply_three_common_filters(const FileSets &file_sets, FileSets &result,
   NonHashableFilter filter_4{filter_3.new_file_sets, compare_files_fdupes};
   IO::end_animation();
   auto t2 = high_resolution_clock::now();
-  // duration<double, std::milli> ms_double = t2 - t1;
-  if (print)
-    IO::print_json(filter_4.new_file_sets);
+  spdlog::info("Bin comparison time: {}",
+               (duration<double, std::milli>{t2 - t1}).count());
+  if (print) IO::print_json(filter_4.new_file_sets);
 #else
-  if (print)
-    IO::print_json(filter_2.new_file_sets);
+  if (print) IO::print_json(filter_2.new_file_sets);
 #endif
   result = std::move(filter_3.new_file_sets);
 }
 
 int main(int argc, char *argv[]) {
+  spdlog::set_level(spdlog::level::warn);
   cxxopts::Options options("undupe", "Remove duplicate files.");
   try {
     add_options(options, argc, argv);
@@ -59,8 +60,7 @@ int main(int argc, char *argv[]) {
   FileSets input_file_sets, resulting_file_sets;
   IO::parse_input(input_file_sets);
 
-  if (cxxopts_results.count("dry-run"))
-    dry_run = true;
+  if (cxxopts_results.count("dry-run")) dry_run = true;
 
   if (cxxopts_results.count("delete")) {
     apply_three_common_filters(input_file_sets, resulting_file_sets, false);
