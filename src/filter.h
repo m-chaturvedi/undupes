@@ -1,11 +1,11 @@
 #pragma once
-#include <ostream>  // for ostream
 #include <stdint.h> // for uint64_t
 
 #include <functional>    // for function
 #include <iostream>      // for basic_ostream, operator<<, cout, endl
 #include <list>          // for list, __list_iterator, operator!=
 #include <memory>        // for shared_ptr
+#include <ostream>       // for ostream
 #include <string>        // for basic_string, string
 #include <type_traits>   // for invoke_result
 #include <unordered_map> // for unordered_map
@@ -27,33 +27,49 @@ bool operator==(const FilePtr &l, const FilePtr &r);
 bool operator==(const FileVector &l, const FileVector &r);
 bool operator==(const FileSets &l, const FileSets &r);
 
-class Filter {
+template <class Attr> class Filter {
 public:
+  Filter(const FileSets &_file_sets, Attr _attr)
+      : file_sets{_file_sets}, attr{_attr} {};
   FileSets file_sets;
   FileSets new_file_sets;
+  Attr attr;
+};
+
+template <class Attr> class HashableFilter : public Filter<Attr> {
+public:
   // attr needs to have == and < defined.  We can reduce to just '=='.
-  template <class Attr>
-  Filter(const FileSets &file_sets, Attr attr) : file_sets{file_sets} {
-    for (FileVector files : file_sets) {
+  HashableFilter(const FileSets &_file_sets, Attr _attr)
+      : Filter<Attr>{_file_sets, _attr} {
+    for (FileVector files : _file_sets) {
       using ReturnType = typename std::invoke_result<Attr, FilePtr>::type;
       std::unordered_map<ReturnType, FileVector> M;
       for (auto &file : files) {
-        M[attr(file)].push_back(file);
+        M[_attr(file)].push_back(file);
       }
       for (auto const &[key, val] : M) {
         if (val.size() > 1)
-          new_file_sets.push_back(std::move(val));
+          (Filter<Attr>::new_file_sets).push_back(std::move(val));
       }
     }
   }
 
+  void print_with_filter(const FileSets &file_sets, Attr attr) const {
+    for (FileVector files : file_sets) {
+      for (auto &file : files) {
+        std::cout << file << " " << attr(file) << std::endl;
+      }
+    }
+  }
+};
+
+template <class Attr> class NonHashableFilter : public Filter<Attr> {
+public:
   // TODO: Consider making the the strings as FilePtr
   // TODO: Cleanup the hashable boolean by correcting the design.
-  Filter(const FileSets &file_sets,
-         std::function<bool(const std::string &, const std::string &)> attr,
-         bool hashable)
-      : file_sets{file_sets} {
-    for (const FileVector &files : file_sets) {
+  NonHashableFilter(const FileSets &_file_sets, Attr _attr)
+      : Filter<Attr>{_file_sets, _attr} {
+    for (const FileVector &files : _file_sets) {
       std::list<FilePtr> file_list(files.begin(), files.end());
 
       while (!file_list.empty()) {
@@ -61,23 +77,14 @@ public:
         FilePtr top = file_vector.at(0);
         file_list.erase(file_list.begin());
         for (auto it = file_list.begin(); it != file_list.end();) {
-          if (attr(top->get_path(), (*it)->get_path())) {
+          if (_attr(top->get_path(), (*it)->get_path())) {
             file_vector.emplace_back(*it);
             it = file_list.erase(it);
           } else
             ++it;
         }
         if (file_vector.size() > 1)
-          new_file_sets.emplace_back(file_vector);
-      }
-    }
-  }
-
-  template <class Attr>
-  void print_with_filter(const FileSets &file_sets, Attr attr) {
-    for (FileVector files : file_sets) {
-      for (auto &file : files) {
-        std::cout << file << " " << attr(file) << std::endl;
+          Filter<Attr>::new_file_sets.emplace_back(file_vector);
       }
     }
   }

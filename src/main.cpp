@@ -20,14 +20,14 @@ extern cxxopts::ParseResult cxxopts_results;
 
 void apply_three_common_filters(const FileSets &file_sets, FileSets &result,
                                 bool print = true) {
-  Filter filter_1{file_sets, FiltersList::file_size};
-  Filter filter_2{filter_1.new_file_sets, FiltersList::xxhash_4KB};
-  Filter filter_3{filter_2.new_file_sets, FiltersList::xxhash};
-  IO::end_animation();
+  HashableFilter filter_1{file_sets, FiltersList::file_size};
+  HashableFilter filter_2{filter_1.new_file_sets, FiltersList::xxhash_4KB};
+  HashableFilter filter_3{filter_2.new_file_sets, FiltersList::xxhash};
 
 #if WITH_BIN_COMPARISON == 1
   auto t1 = high_resolution_clock::now();
-  Filter filter_4{filter_3.new_file_sets, compare_files_fdupes, false};
+  NonHashableFilter filter_4{filter_3.new_file_sets, compare_files_fdupes};
+  IO::end_animation();
   auto t2 = high_resolution_clock::now();
   // duration<double, std::milli> ms_double = t2 - t1;
   if (print)

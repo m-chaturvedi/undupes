@@ -381,7 +381,6 @@ TEST_F(IOTest, ParseInputTest) {
   std::string line;
   FileVector logged_files;
 
-  sleep(1);
   while (std::getline(spdlog_file, line, '\n')) {
     auto res = std::regex_search(
         line, sm,

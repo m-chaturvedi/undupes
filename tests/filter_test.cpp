@@ -30,7 +30,7 @@ protected:
 };
 
 TEST_F(FilterTest, ConstructorFileSizeFilter) {
-  Filter filter{file_sets_dir_2, FiltersList::file_size};
+  HashableFilter filter{file_sets_dir_2, FiltersList::file_size};
   FileSets &new_file_sets = filter.new_file_sets;
   EXPECT_EQ(new_file_sets.size(), 5);
   FileSets expected_file_set;
@@ -47,14 +47,14 @@ TEST_F(FilterTest, ConstructorFileSizeFilter) {
 }
 
 TEST_F(FilterTest, ConstructorXxhashFilter) {
-  Filter filter{file_sets_dir_2, FiltersList::xxhash};
+  HashableFilter filter{file_sets_dir_2, FiltersList::xxhash};
   FileSets &new_file_sets = filter.new_file_sets;
   filter.print_with_filter(new_file_sets, FiltersList::xxhash);
   EXPECT_EQ(new_file_sets.size(), 0);
 }
 
 TEST_F(FilterTest, ConstructorBinComparison) {
-  Filter filter{file_sets_dir_3, compare_files_fdupes, false};
+  NonHashableFilter filter{file_sets_dir_3, compare_files_fdupes};
   FileSets &new_file_sets = filter.new_file_sets;
   auto ms = [](std::string file_name) {
     return std::make_shared<File>("artifacts/dir_3/" + file_name);
@@ -94,7 +94,7 @@ TEST_F(FilterTest, ConstructorBinComparison) {
   EXPECT_EQ(new_file_sets, expected);
 }
 TEST_F(FilterTest, ConstructorRealLife1) {
-  Filter filter{file_sets_dir_3, FiltersList::xxhash};
+  HashableFilter filter{file_sets_dir_3, FiltersList::xxhash};
   FileSets &new_file_sets = filter.new_file_sets;
   auto ms = [](std::string file_name) {
     return std::make_shared<File>("artifacts/dir_3/" + file_name);
