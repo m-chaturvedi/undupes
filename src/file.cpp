@@ -89,22 +89,6 @@ fs::directory_entry File::get_resolved_dir_entry() const {
 
 std::string File::get_path() const { return this->dir_entry.path().string(); }
 
-size_t File::orig_path_length() const { return this->get_path().size(); }
-
-size_t File::resolved_path_length() const {
-  return this->get_resolved_dir_entry().path().string().size();
-}
-
-bool File::is_file() const {
-  return file_type == FileType::symlinked_file ||
-         file_type == FileType::regular_file;
-}
-
-bool File::is_dir() const {
-  return file_type == FileType::symlinked_dir ||
-         file_type == FileType::regular_dir;
-}
-
 bool File::check_file_or_log(const std::set<FileType> &accepted) const {
   if (accepted.find(this->get_file_type()) == accepted.end()) {
     spdlog::warn("Path not a file or a symlink to a file, skipping: {}",

@@ -3,9 +3,9 @@
 
 #include <filesystem>  // for directory_entry
 #include <fstream>
-#include <set>
 #include <ostream>  // for ostream
-#include <string>   // for basic_string, string
+#include <set>
+#include <string>  // for basic_string, string
 
 #include "debug.h"
 
@@ -47,14 +47,6 @@ class File {
   friend std::ostream &operator<<(std::ostream &os, const File &obj);
   friend bool operator==(const File &l, const File &r);
 
-  size_t orig_path_length() const;
-
-  size_t resolved_path_length() const;
-
   bool is_nonbroken_symlink() const;
-
-  bool is_file() const;
-  bool is_dir() const;
-
   std::string time_string() const;
 };

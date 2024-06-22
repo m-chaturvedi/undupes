@@ -48,7 +48,7 @@ TEST_F(FilterTest, ConstructorFileSizeFilter) {
 
 TEST_F(FilterTest, ConstructorXxhashFilter) {
   HashableFilter filter{file_sets_dir_2, FiltersList::xxhash};
-  FileSets &new_file_sets = filter.new_file_sets;
+  const FileSets &new_file_sets = filter.new_file_sets;
   filter.print_with_filter(new_file_sets, FiltersList::xxhash);
   EXPECT_EQ(new_file_sets.size(), 0);
 }
@@ -56,7 +56,7 @@ TEST_F(FilterTest, ConstructorXxhashFilter) {
 TEST_F(FilterTest, ConstructorBinComparison) {
   NonHashableFilter filter{file_sets_dir_3, compare_files_fdupes};
   FileSets &new_file_sets = filter.new_file_sets;
-  auto ms = [](std::string file_name) {
+  auto ms = [](const std::string &file_name) {
     return std::make_shared<File>("artifacts/dir_3/" + file_name);
   };
 
@@ -96,7 +96,7 @@ TEST_F(FilterTest, ConstructorBinComparison) {
 TEST_F(FilterTest, ConstructorRealLife1) {
   HashableFilter filter{file_sets_dir_3, FiltersList::xxhash};
   FileSets &new_file_sets = filter.new_file_sets;
-  auto ms = [](std::string file_name) {
+  auto ms = [](const std::string &file_name) {
     return std::make_shared<File>("artifacts/dir_3/" + file_name);
   };
 

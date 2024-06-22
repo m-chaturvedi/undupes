@@ -29,7 +29,7 @@ protected:
     fs::copy("artifacts/dir_3", "/tmp/dir_3.copy",
              fs::copy_options::overwrite_existing |
                  fs::copy_options::recursive);
-    auto ms = [](std::string file_name) {
+    auto ms = [](const std::string &file_name) {
       return std::make_shared<File>("artifacts/dir_3/" + file_name);
     };
 
@@ -88,7 +88,7 @@ protected:
 
 bool files_eq(const string &A, const string &B);
 
-void delete_files(FileSets &resulting_file_sets,
+void delete_files(const FileSets &resulting_file_sets,
                   std::vector<int> test_cases = {1, 2, 3}) {
   for (const int j : test_cases) {
     KeepFileSets kps(resulting_file_sets.size());
@@ -233,8 +233,6 @@ TEST_F(IOTest, SanitizeAndCheckInputTest) {
 }
 
 TEST_F(IOTest, RemoveFileIOTest) {
-  string input;
-
   bool dry_run_before = dry_run;
 
   dry_run = true;
