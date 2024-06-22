@@ -1,9 +1,10 @@
 #include "file.h"
-#include "debug.h"
+
+#include <set>
+#include <ostream>      // for operator<<, char_traits, basic_ostream
+#include <string_view>  // for operator==, basic_string_view, operator""sv
 
 #include "debug.h"
-#include <ostream>     // for operator<<, char_traits, basic_ostream
-#include <string_view> // for operator==, basic_string_view, operator""sv
 
 using namespace std::literals::string_view_literals;
 /**
@@ -16,24 +17,24 @@ using namespace std::literals::string_view_literals;
  */
 std::ostream &operator<<(std::ostream &os, const FileType &obj) {
   switch (obj) {
-  case FileType::regular_file:
-    os << "RegularFile";
-    break;
-  case FileType::symlinked_file:
-    os << "SymlinkedFile";
-    break;
-  case FileType::symlinked_dir:
-    os << "SymlinkedDirectory";
-    break;
-  case FileType::regular_dir:
-    os << "RegularDirectory";
-    break;
-  case FileType::broken_symlink:
-    os << "BrokenSymlink";
-    break;
-  case FileType::other:
-    os << "Other";
-    break;
+    case FileType::regular_file:
+      os << "RegularFile";
+      break;
+    case FileType::symlinked_file:
+      os << "SymlinkedFile";
+      break;
+    case FileType::symlinked_dir:
+      os << "SymlinkedDirectory";
+      break;
+    case FileType::regular_dir:
+      os << "RegularDirectory";
+      break;
+    case FileType::broken_symlink:
+      os << "BrokenSymlink";
+      break;
+    case FileType::other:
+      os << "Other";
+      break;
   }
   return os;
 }
@@ -51,12 +52,9 @@ FileType File::get_file_type() const {
     return FileType::regular_dir;
   else if (dir_entry.is_symlink()) {
     fs::directory_entry resolved_dir_entry = get_resolved_dir_entry();
-    if (!fs::exists(dir_entry.path()))
-      return FileType::broken_symlink;
-    if (resolved_dir_entry.is_regular_file())
-      return FileType::symlinked_file;
-    if (resolved_dir_entry.is_directory())
-      return FileType::symlinked_dir;
+    if (!fs::exists(dir_entry.path())) return FileType::broken_symlink;
+    if (resolved_dir_entry.is_regular_file()) return FileType::symlinked_file;
+    if (resolved_dir_entry.is_directory()) return FileType::symlinked_dir;
   }
   return FileType::other;
 }
@@ -105,4 +103,22 @@ bool File::is_file() const {
 bool File::is_dir() const {
   return file_type == FileType::symlinked_dir ||
          file_type == FileType::regular_dir;
+}
+
+bool File::check_file_or_log(const std::set<FileType> &accepted) const {
+  if (accepted.find(this->get_file_type()) == accepted.end()) {
+    spdlog::warn("Path not a file or a symlink to a file, skipping: {}",
+                 this->get_path());
+    return false;
+  }
+
+  std::ifstream ifs;
+  ifs.open(this->get_path(), std::ios_base::in);
+  if (!ifs.good()) {
+    spdlog::warn("Could not open file, skipping: {}", this->get_path());
+    return false;
+  }
+
+  ifs.close();
+  return true;
 }

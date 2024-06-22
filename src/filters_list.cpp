@@ -1,17 +1,18 @@
 #define XXH_PRIVATE_API 0
 #include "filters_list.h"
 
-#include <stdint.h> // for uint64_t
-#include <stdlib.h> // for free, malloc
+#include <fmt/format.h>
+#include <stdint.h>  // for uint64_t
+#include <stdlib.h>  // for free, malloc
+#include <xxhash.h>  // for XXH_INLINE_XXH3_128bits_digest
+
+#include <exception>   // for exception
+#include <filesystem>  // for file_size, directory_entry
+#include <iostream>    // for operator<<, basic_ostream, cout
 #include <unordered_set>
-#include <xxhash.h> // for XXH_INLINE_XXH3_128bits_digest
 
-#include <exception>  // for exception
-#include <filesystem> // for file_size, directory_entry
-#include <iostream>   // for operator<<, basic_ostream, cout
-
-#include "debug.h"  // for error, format, vformat_to, format...
-#include "filter.h" // for FilePtr
+#include "debug.h"   // for error, format, vformat_to, format...
+#include "filter.h"  // for FilePtr
 
 namespace fs = std::filesystem;
 
@@ -25,11 +26,22 @@ std::string FiltersList::xxhash_4KB(const FilePtr file) {
   XXH128_hash_t hash;
   FILE *fptr = fopen(file->get_path().c_str(), "rb");
 
+  if (fptr == NULL)
+    throw std::runtime_error(
+        fmt::format("Cannot open file: {}", file->get_path()));
+
   size_t read_size, block_size = 4 * (1 << 10);
   void *const buffer = malloc(block_size);
   XXH3_128bits_reset(&state3);
 
   read_size = fread(buffer, 1, block_size, fptr);
+  if (read_size != block_size && ferror(fptr)) {
+    free(buffer);
+    fclose(fptr);
+    throw std::runtime_error(
+        fmt::format("Error reading file: {}", file->get_path()));
+  }
+
   (void)XXH3_128bits_update(&state3, buffer, read_size);
   hash = XXH3_128bits_digest(&state3);
   fclose(fptr);
@@ -97,8 +109,7 @@ bool FiltersList::is_subdirectory(const std::filesystem::path &p1,
   IC(p1_abs, p2_abs);
   for (it1 = p1_abs.begin(), it2 = p2_abs.begin();
        it1 != p1_abs.end() && it2 != p2_abs.end(); ++it1, ++it2) {
-    if (*it1 != *it2)
-      return false;
+    if (*it1 != *it2) return false;
   }
   return it1 == p1_abs.end();
   ;

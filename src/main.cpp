@@ -1,6 +1,7 @@
 #include <chrono>
 #include <fstream>
 #include <functional>
+#include <memory>
 
 #include "bin_compare_files.h"
 #include "cli.h"
@@ -40,6 +41,8 @@ void apply_three_common_filters(const FileSets &file_sets, FileSets &result,
 }
 
 int main(int argc, char *argv[]) {
+  std::shared_ptr<spdlog::logger> stderr_sink = spdlog::stderr_color_mt("stderr");
+  spdlog::set_default_logger(stderr_sink);
   spdlog::set_level(spdlog::level::warn);
   cxxopts::Options options("undupe", "Remove duplicate files.");
   try {

@@ -7,7 +7,7 @@ add_executable(bin_compare_files_test bin_compare_files_test.cpp)
 add_executable(io_test io_test.cpp)
 add_executable(filters_list_test filters_list_test.cpp)
 
-target_link_libraries(file_test GTest::gtest_main file)
+target_link_libraries(file_test GTest::gtest_main file filter)
 target_link_libraries(filter_test GTest::gtest_main filter file filters_list
                       bin_compare_files)
 target_link_libraries(bin_compare_files_test GTest::gtest_main

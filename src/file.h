@@ -1,9 +1,13 @@
 #pragma once
-#include <ostream>  // for ostream
-#include <stddef.h> // for size_t
+#include <stddef.h>  // for size_t
 
-#include <filesystem> // for directory_entry
-#include <string>     // for basic_string, string
+#include <filesystem>  // for directory_entry
+#include <fstream>
+#include <set>
+#include <ostream>  // for ostream
+#include <string>   // for basic_string, string
+
+#include "debug.h"
 
 namespace fs = std::filesystem;
 
@@ -26,7 +30,7 @@ std::ostream &operator<<(std::ostream &os, const FileType &obj);
  * could be a file/directory/symlink etc. like mentioned in the FileType class.
  */
 class File {
-public:
+ public:
   fs::directory_entry dir_entry;
   explicit File(const std::string &path)
       : dir_entry{path}, file_type{this->get_file_type()} {}
@@ -36,7 +40,9 @@ public:
   // TODO: Remove this.
   fs::directory_entry get_resolved_dir_entry() const;
 
-private:
+  bool check_file_or_log(const std::set<FileType> &accepted) const;
+
+ private:
   FileType file_type;
   friend std::ostream &operator<<(std::ostream &os, const File &obj);
   friend bool operator==(const File &l, const File &r);

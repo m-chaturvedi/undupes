@@ -68,7 +68,6 @@ protected:
     fs::copy("/tmp/dir_3.copy", "artifacts/dir_3",
              fs::copy_options::overwrite_existing |
                  fs::copy_options::recursive);
-    std::filesystem::remove("spdlog.txt");
   }
   // https://stackoverflow.com/a/39560347/873956
   vector<int> expected_file_list = std::vector<int>(10);
@@ -385,7 +384,7 @@ TEST_F(IOTest, ParseInputTest) {
     auto res = std::regex_search(
         line, sm,
         std::regex{
-            R"(\[\S+ \S+\] \[basic_logger\] \[warning\] Path not a file or a symlink to one: (\S+))"});
+            R"(\[\S+ \S+\] \[basic_logger\] \[warning\] Path not a file or a symlink to a file, skipping: (\S+))"});
 
     EXPECT_TRUE(res && sm[1].matched);
     logged_files.emplace_back(std::make_shared<File>(sm.str(1)));

@@ -8,5 +8,6 @@
 #include "spdlog/common.h"  // for format_string_t
 #include "spdlog/fmt/fmt.h" // for format, vformat_to
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 // IWYU pragma: end_exports
