@@ -1,17 +1,18 @@
-#include "filters_list.h" // for xxhash, fs, file_size
+#include "filters_list.h"  // for xxhash, fs, file_size
 
-#include <gtest/gtest.h> // for TestInfo (ptr only), EXPECT_EQ, TEST_F
+#include <gtest/gtest.h>  // for TestInfo (ptr only), EXPECT_EQ, TEST_F
 
 #include <exception>
-#include <filesystem> // for recursive_directory_iterator, begin
-#include <ostream>    // for operator<<
+#include <filesystem>  // for recursive_directory_iterator, begin
+#include <memory>
+#include <ostream>  // for operator<<
 #include <string>
 
 #include "debug.h"
 
 using namespace std;
 class FiltersListTest : public testing::Test {
-protected:
+ protected:
   // Remember that SetUp() is run immediately before a test starts.
   void SetUp() override {}
 
@@ -19,31 +20,22 @@ protected:
   void TearDown() override {}
 };
 
-TEST_F(FiltersListTest, IsSubdirectoryTest) {
-  using path = std::filesystem::path;
-  auto is_sub = FiltersList::is_subdirectory;
-  path p1{"artifacts/dir_4/a"}, p2{"artifacts/dir_4/a/d"};
-  EXPECT_TRUE(is_sub(p1, p2));
+TEST_F(FiltersListTest, xxhashT4KBTest) {
+  FilePtr f = make_shared<File>("artifacts/dir_3/4KB_1");
+  std::string hash = FiltersList::xxhash_4KB(f);
+  IC(hash);
+  // xxh128sum artifacts/dir_3/4KB_1
+  EXPECT_EQ(hash, "9095db0480326fe09475cd87df7cdb81");
 
-  p1 = path{"artifacts/dir_4/a/d"}, p2 = path{"artifacts/dir_4/a"};
-  EXPECT_FALSE(is_sub(p1, p2));
-  p1 = path{"artifacts/dir_4/a"}, p2 = path{"artifacts/dir_4/ab"};
-  EXPECT_FALSE(is_sub(p1, p2));
+  f = make_shared<File>("artifacts/sample_1.pdf");
+  hash = FiltersList::xxhash_4KB(f);
+  // head -c 4096 ./artifacts/sample_1.pdf
+  EXPECT_EQ(hash, "1cdfeb1e989503ea743248b5a8122fc3");
+}
 
-  p1 = path{"artifacts/dir_4/a"}, p2 = path{"artifacts/dir_4/ab/c"};
-  EXPECT_FALSE(is_sub(p1, p2));
-
-  p1 = path{"./artifacts/dir_4/a"}, p2 = path{"artifacts/dir_4/a/d"};
-  EXPECT_TRUE(is_sub(p1, p2));
-
-  p1 = path{"./artifacts/dir_4/"}, p2 = path{"artifacts/dir_4/f1"};
-  try {
-    is_sub(p1, p2);
-    FAIL() << "Expected std::runtime_error";
-  } catch (const std::runtime_error &exp) {
-    // exp.what() returns const char pointer;
-    EXPECT_EQ(string(exp.what()), "The paths should be directories.");
-  } catch (...) {
-    FAIL() << "Different exception than expected caught";
-  }
+TEST_F(FiltersListTest, xxhashTest) {
+  FilePtr f = make_shared<File>("artifacts/sample_1.pdf");
+  string hash = FiltersList::xxhash(f);
+  // xxh128sum artifacts/sample_1.pdf
+  EXPECT_EQ(hash, "a9e96523afa48867198c85f09dff5983");
 }

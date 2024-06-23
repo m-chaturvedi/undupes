@@ -8,7 +8,8 @@
 
 #include <exception>   // for exception
 #include <filesystem>  // for file_size, directory_entry
-#include <iostream>    // for operator<<, basic_ostream, cout
+#include <fstream>
+#include <iostream>  // for operator<<, basic_ostream, cout
 #include <unordered_set>
 
 #include "debug.h"   // for error, format, vformat_to, format...
@@ -16,11 +17,22 @@
 
 namespace fs = std::filesystem;
 
+void convert_xxh128_hash_to_string(XXH128_hash_t hash, std::string &str) {
+  std::ostringstream os;
+  XXH128_canonical_t cano;
+  XXH128_canonicalFromHash(&cano, hash);
+  for (size_t i = 0; i < sizeof(cano.digest); ++i) {
+    os << std::setw(2) << std::setfill('0') << std::hex << int(cano.digest[i]);
+  }
+  str = os.str();
+}
+
 size_t FiltersList::file_size(const FilePtr a) {
   size_t size_a = fs::file_size((a->get_resolved_dir_entry()).path());
   return size_a;
 }
 
+// https://github.com/Cyan4973/xxHash/blob/805c00b68fa754200ada0c207ffeaa7a4409377c/cli/xxhsum.c#L243
 std::string FiltersList::xxhash_4KB(const FilePtr file) {
   XXH3_state_t state3;
   XXH128_hash_t hash;
@@ -47,8 +59,10 @@ std::string FiltersList::xxhash_4KB(const FilePtr file) {
   fclose(fptr);
   free(buffer);
 
-  uint64_t low{hash.low64}, high{hash.high64};
-  return (std::to_string(low) + std::to_string(high));
+  // https://github.com/Cyan4973/xxHash/blob/805c00b68fa754200ada0c207ffeaa7a4409377c/xxhash.h#L215
+  std::string hash_str;
+  convert_xxh128_hash_to_string(hash, hash_str);
+  return hash_str;
 }
 
 std::string FiltersList::xxhash(const FilePtr file) {
@@ -77,40 +91,15 @@ std::string FiltersList::xxhash(const FilePtr file) {
 
     hash = XXH3_128bits_digest(&state3);
     fclose(fptr);
-    uint64_t low{hash.low64}, high{hash.high64};
     free(buffer);
 
-    return (std::to_string(low) + std::to_string(high));
+    // https://github.com/Cyan4973/xxHash/blob/805c00b68fa754200ada0c207ffeaa7a4409377c/xxhash.h#L215
+    std::string hash_str;
+    convert_xxh128_hash_to_string(hash, hash_str);
+    return hash_str;
   } catch (const std::exception &exp) {
     std::cout << "Caught exception: '" << exp.what() << "'\n";
     free(buffer);
     throw exp;
   }
-}
-
-/**
- * @brief Checks whether directory p2 is a subdirectory of directory p1
- *
- * @param p1 Directory which is to be check for parent directory.
- * @param p2 Directory to be checked for subdirectory
- *
- * @return true if p2 is subdirectory of p1 and false otherwise.
- */
-bool FiltersList::is_subdirectory(const std::filesystem::path &p1,
-                                  const std::filesystem::path &p2) {
-  using path = std::filesystem::path;
-  if (!std::filesystem::is_directory(p1) || !std::filesystem::is_directory(p2))
-    throw std::runtime_error("The paths should be directories.");
-  // Needs to be canonicalized to take care of ., .., etc.
-  path p1_abs = fs::canonical(fs::absolute(p1));
-  path p2_abs = fs::canonical(fs::absolute(p2));
-  path::const_iterator it1, it2;
-
-  IC(p1_abs, p2_abs);
-  for (it1 = p1_abs.begin(), it2 = p2_abs.begin();
-       it1 != p1_abs.end() && it2 != p2_abs.end(); ++it1, ++it2) {
-    if (*it1 != *it2) return false;
-  }
-  return it1 == p1_abs.end();
-  ;
 }

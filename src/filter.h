@@ -66,7 +66,6 @@ public:
 template <class Attr> class NonHashableFilter : public Filter<Attr> {
 public:
   // TODO: Consider making the the strings as FilePtr
-  // TODO: Cleanup the hashable boolean by correcting the design.
   NonHashableFilter(const FileSets &_file_sets, Attr _attr)
       : Filter<Attr>{_file_sets, _attr} {
     for (const FileVector &files : _file_sets) {
