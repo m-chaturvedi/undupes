@@ -1,10 +1,8 @@
-
-
 # Quick Actions
 
 ### Installation
 
-There are no prerequisites libraries needed to be installed separately for `undupes`.  It has been tested with Ubuntu (24.04, 22.04, 20.04) and Debian (bookwom, buster).  So the usual cmake installation steps should work for those distros.
+There are no prerequisite libraries needed to be installed separately for `undupes`.  It has been tested with Ubuntu (24.04, 22.04, 20.04) and Debian (bookwom, buster).  So the usual cmake installation steps should work for at least those distros.
 
 ```
 mkdir build
@@ -28,8 +26,6 @@ Usage:
                      write to.
   -h, --help         Print usage
 ```
-
-
 
 # Find duplicates (Unix style)
 

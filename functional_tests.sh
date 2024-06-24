@@ -14,19 +14,19 @@ function cleanup() {
 
 trap 'cleanup' EXIT
 
-declare -r UNDUPE=${PWD}/build/src/undupe
-export UNDUPE
+declare -r UNDUPES=${UNDUPES:-${PWD}/build/install/bin/undupes}
+export UNDUPES
 declare -r ORIG_DIR=${PWD}
 
 function vanilla_test() {
-	find tests/artifacts/dir_3 -type f -print0 | sort -z | ./build/src/undupe |
+	find tests/artifacts/dir_3 -type f -print0 | sort -z | ${UNDUPES} |
 		jq '.[].file_list' >${TMP_DIR}/a.txt
 
 	diff ${TMP_DIR}/a.txt tests/artifacts/functional_test/expected_dir_3_output.txt
 }
 
 function summary_test() {
-	find tests/artifacts/dir_3 -type f -print0 | sort -z | ./build/src/undupe -m >${TMP_DIR}/b.txt
+	find tests/artifacts/dir_3 -type f -print0 | sort -z | ${UNDUPES} -m >${TMP_DIR}/b.txt
 
 	diff ${TMP_DIR}/b.txt tests/artifacts/functional_test/expected_dir_3_summary.txt
 }
@@ -78,7 +78,7 @@ function delete_test() {
 
 	cp -R tests/artifacts/dir_3 ${TMP_DIR}
 	pushd ${TMP_DIR}
-	find . -type f -print0 | ${UNDUPE} >${TMP_DIR}/dir_3_op.json
+	find . -type f -print0 | ${UNDUPES} >${TMP_DIR}/dir_3_op.json
 	popd
 	diff ${TMP_DIR}/dir_3_op.json tests/artifacts/functional_test/expected_dir_3.json
 	diff <(ls -1 tests/artifacts/dir_3) <(ls -1 ${TMP_DIR}/dir_3)

@@ -1,14 +1,27 @@
-# Ubuntu:20.04 supports 3.13.4
+# Ubuntu:20.04 supports 3.16.3
 cmake_minimum_required(VERSION 3.16.3)
+project(
+  undupes
+  LANGUAGES CXX
+  VERSION 1.0.0)
+
 include(FetchContent)
-
-project(undupes LANGUAGES CXX)
-
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(Packing)
+set(DISTRO_INFO
+    ""
+    CACHE STRING "Distro specific information used of packaging.")
+# Had to ditch clang because of this:
+# https://github.com/llvm/llvm-project/issues/95875#issuecomment-2174999799
 # set(CMAKE_CXX_COMPILER "/usr/bin/clang++-18") set(CMAKE_C_COMPILER
 # "/usr/bin/clang-18") set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra
 # -stdlib=libc++") set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}
 # -stdlib=libc++ -lc++abi")
 
+set(CPACK_BINARY_DEB ON)
+set(CPACK_BINARY_RPM ON)
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "mmanu.chaturvedi@gmail.com")
+set(CPACK_STGZ ON)
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_CXX_STANDARD 20)
@@ -16,8 +29,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# https://gitlab.kitware.com/cmake/cmake/-/issues/25107
 FetchContent_Declare(
   spdlog
+  DOWNLOAD_EXTRACT_TIMESTAMP ON
   GIT_REPOSITORY https://github.com/gabime/spdlog.git
   GIT_TAG v1.14.1)
 
@@ -26,30 +41,36 @@ FetchContent_Declare(
 
 FetchContent_Declare(
   fmt
+  DOWNLOAD_EXTRACT_TIMESTAMP ON
   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
   GIT_TAG 10.2.1)
 
 FetchContent_Declare(
   json
+  DOWNLOAD_EXTRACT_TIMESTAMP ON
   URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
 
 FetchContent_Declare(
   xxhash
+  DOWNLOAD_EXTRACT_TIMESTAMP ON
   GIT_REPOSITORY https://github.com/Cyan4973/xxHash.git
   GIT_TAG v0.8.1)
 
 FetchContent_Declare(
   cxxopts
+  DOWNLOAD_EXTRACT_TIMESTAMP ON
   GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
   GIT_TAG v3.2.1)
 
 FetchContent_Declare(
   icecream-cpp
+  DOWNLOAD_EXTRACT_TIMESTAMP ON
   GIT_REPOSITORY https://github.com/renatoGarcia/icecream-cpp.git
   GIT_TAG 31ca6d826e924208853c09ff244d7073d45835b8)
 
 FetchContent_Declare(
   googletest
+  DOWNLOAD_EXTRACT_TIMESTAMP ON
   URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
 )
 

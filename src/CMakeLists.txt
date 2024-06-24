@@ -22,3 +22,5 @@ target_link_libraries(
 
 target_link_directories(undupes PRIVATE ${gflags_BINARY_DIR}
                         ${spdlog_BINARY_DIR})
+
+install(TARGETS undupes RUNTIME DESTINATION bin)

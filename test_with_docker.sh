@@ -10,6 +10,8 @@ function cleanup() {
 
 trap cleanup EXIT
 
+export BUILD_DIR="${BUILD_DIR:-${PWD}/build_docker}"
+
 declare -a IMAGE_LIST=(
 	ubuntu:24.04
 	ubuntu:22.04
@@ -24,8 +26,8 @@ for image in ${IMAGE_LIST[@]}; do
 		docker build --tag ${undupe_image} --build-arg="IMAGE_NAME=${image}" .
 	fi
 
-	docker run --rm -it -v $PWD:/undupe ${undupe_image} bash -c \
-		'rm -rf build; bash -x install.sh; bash -x run_all_tests.sh;'
+	docker run --rm --env BUILD_DIR -v $PWD:/undupe -it ${undupe_image} \
+		bash -c 'rm -rf ${BUILD_DIR}; bash -x install.sh;'
 done
 
-echo "All deb tests passed."
+echo "All tests passed. All packages built."

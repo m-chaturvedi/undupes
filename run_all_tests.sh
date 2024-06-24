@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if ! [[ -d build ]]; then
+BUILD_DIR=${BUILD_DIR:-build}
+
+if ! [[ -d ${BUILD_DIR} ]]; then
 	BUILD_TYPE="Debug" bash build.sh
 else
-	pushd build
-	if [[ -z "$(which ninja)" ]]; then
+	pushd "${BUILD_DIR}"
+	if [[ ${INSIDE_DOCKER} -eq 1 ]]; then
 		make -j
 	else
 		ninja
@@ -13,7 +15,7 @@ else
 	popd
 fi
 
-pushd build/tests
+pushd "${BUILD_DIR}/tests"
 ctest --output-on-failure
 popd
 bash functional_tests.sh

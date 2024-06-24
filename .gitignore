@@ -1,14 +1,14 @@
 # Directories
-/.ccls-cache/
-/.vscode/
-/build*/
-/compile_commands.json
-/__pycache__/
-/Testing/
-/gmon.out
-/include-what-you-use.txt
-/cppcheck.txt
-
 # Files
 *.swp
+/.ccls-cache/
+/.vscode/
+/Testing/
+/__pycache__/
+/_packages/
+build*/
+/compile_commands.json
+/cppcheck.txt
+/gmon.out
+/include-what-you-use.txt
 gitignore_me_*

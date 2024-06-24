@@ -10,6 +10,8 @@ from typing import collections
 
 USE_FD = False
 prog_name = os.getenv("PROG_NAME", "jdupes -z")
+UNDUPES = os.getenv("UNDUPES", "./build/install/bin/undupes")
+FIND_OPTIONS = os.getenv("FIND_OPTIONS", "")
 #  prog_name = "fdupes"
 
 
@@ -34,16 +36,18 @@ def get_fdupes_output(path="."):
 
 def get_undupes_output(path="."):
     global USE_FD
+    global UNDUPES
+    global FIND_OPTIONS
     if USE_FD:
         files_output = subprocess.check_output(
             f"fd -u . --type f --print0 {path}", shell=True
         )
     else:
         files_output = subprocess.check_output(
-            f"find {path} -type f -print0", shell=True
+            f"find {path} -type f {FIND_OPTIONS}-print0", shell=True
         )
 
-    undupes_output = subprocess.check_output("./build/src/undupe", input=files_output)
+    undupes_output = subprocess.check_output(UNDUPES, input=files_output)
     json_output = json.loads(undupes_output)
 
     file_sets = []
