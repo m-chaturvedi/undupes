@@ -1,4 +1,4 @@
-add_executable(undupe main.cpp file.h)
+add_executable(undupes main.cpp file.h)
 
 add_library(debug debug.h debug.cpp)
 add_library(filter filter.h filter.cpp)
@@ -9,7 +9,7 @@ add_library(cli cli.h cli.cpp)
 add_library(bin_compare_files bin_compare_files.h bin_compare_files.cpp)
 
 target_link_libraries(
-  undupe
+  undupes
   filters_list
   filter
   file
@@ -17,7 +17,8 @@ target_link_libraries(
   cli
   bin_compare_files
   nlohmann_json::nlohmann_json
-  cxxopts)
+  cxxopts
+  pthread)
 
-target_link_directories(undupe PRIVATE ${gflags_BINARY_DIR}
+target_link_directories(undupes PRIVATE ${gflags_BINARY_DIR}
                         ${spdlog_BINARY_DIR})

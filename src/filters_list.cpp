@@ -2,18 +2,18 @@
 #include "filters_list.h"
 
 #include <fmt/format.h>
-#include <stdint.h>  // for uint64_t
-#include <stdlib.h>  // for free, malloc
-#include <xxhash.h>  // for XXH_INLINE_XXH3_128bits_digest
+#include <stdint.h> // for uint64_t
+#include <stdlib.h> // for free, malloc
+#include <xxhash.h> // for XXH_INLINE_XXH3_128bits_digest
 
-#include <exception>   // for exception
-#include <filesystem>  // for file_size, directory_entry
+#include <exception>  // for exception
+#include <filesystem> // for file_size, directory_entry
 #include <fstream>
-#include <iostream>  // for operator<<, basic_ostream, cout
+#include <iostream> // for operator<<, basic_ostream, cout
 #include <unordered_set>
 
-#include "debug.h"   // for error, format, vformat_to, format...
-#include "filter.h"  // for FilePtr
+#include "debug.h"  // for error, format, vformat_to, format...
+#include "filter.h" // for FilePtr
 
 namespace fs = std::filesystem;
 

@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.24)
+# Ubuntu:20.04 supports 3.13.4
+cmake_minimum_required(VERSION 3.16.3)
 include(FetchContent)
 
-project(finddup LANGUAGES CXX)
+project(undupes LANGUAGES CXX)
 
 # set(CMAKE_CXX_COMPILER "/usr/bin/clang++-18") set(CMAKE_C_COMPILER
 # "/usr/bin/clang-18") set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra
@@ -10,7 +11,7 @@ project(finddup LANGUAGES CXX)
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

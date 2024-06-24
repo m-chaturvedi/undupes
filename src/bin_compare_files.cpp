@@ -1,8 +1,7 @@
-#include <stdio.h>   // for fclose, fopen, fread, fseek, FILE, SEEK_SET
-#include <string.h>  // for memcmp
-                     //
+#include <stdio.h>  // for fclose, fopen, fread, fseek, FILE, SEEK_SET
+#include <string.h> // for memcmp
 
-#include <string>  // for basic_string, string
+#include <string> // for basic_string, string
 #define CHUNK_SIZE 65536
 /**
  * @brief Binary compare two files. TODO: Handle singint.

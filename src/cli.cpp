@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <unistd.h>
 
 #include "cxxopts.hpp"
 
@@ -21,7 +22,7 @@ void add_options(cxxopts::Options &options, int argc, char *argv[]) {
 
     ("m,summary", "Summary for the files found.")
 
-    ("dry-run", "Do a dry run (do not delete files). Pass a file to write to.",
+    ("y,dry-run", "Do a dry run (do not delete files). Pass a file to write to.",
      cxxopts::value<std::string>())
 
     ("h,help", "Print usage")

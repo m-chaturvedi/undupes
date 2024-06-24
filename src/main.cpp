@@ -33,18 +33,21 @@ void apply_three_common_filters(const FileSets &file_sets, FileSets &result,
   auto t2 = high_resolution_clock::now();
   spdlog::info("Bin comparison time: {}",
                (duration<double, std::milli>{t2 - t1}).count());
-  if (print) IO::print_json(filter_4.new_file_sets);
+  if (print)
+    IO::print_json(filter_4.new_file_sets);
 #else
-  if (print) IO::print_json(filter_2.new_file_sets);
+  if (print)
+    IO::print_json(filter_2.new_file_sets);
 #endif
   result = std::move(filter_3.new_file_sets);
 }
 
 int main(int argc, char *argv[]) {
-  std::shared_ptr<spdlog::logger> stderr_sink = spdlog::stderr_color_mt("stderr");
+  std::shared_ptr<spdlog::logger> stderr_sink =
+      spdlog::stderr_color_mt("stderr");
   spdlog::set_default_logger(stderr_sink);
   spdlog::set_level(spdlog::level::warn);
-  cxxopts::Options options("undupe", "Remove duplicate files.");
+  cxxopts::Options options("undupes", "Remove duplicate files.");
   try {
     add_options(options, argc, argv);
   } catch (std::runtime_error &exp) {
@@ -63,7 +66,8 @@ int main(int argc, char *argv[]) {
   FileSets input_file_sets, resulting_file_sets;
   IO::parse_input(input_file_sets);
 
-  if (cxxopts_results.count("dry-run")) dry_run = true;
+  if (cxxopts_results.count("dry-run"))
+    dry_run = true;
 
   if (cxxopts_results.count("delete")) {
     apply_three_common_filters(input_file_sets, resulting_file_sets, false);

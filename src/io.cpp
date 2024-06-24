@@ -1,33 +1,34 @@
 #include "io.h"
 
-#include <algorithm>   // for sort
-#include <cassert>     // for assert
-#include <cctype>      // for isprint
-#include <chrono>      // for milliseconds
-#include <filesystem>  // for directory_entry
+#include <algorithm>  // for sort
+#include <cassert>    // for assert
+#include <cctype>     // for isprint
+#include <chrono>     // for milliseconds
+#include <filesystem> // for directory_entry
 #include <fstream>
-#include <iostream>           // for operator<<, basic_ostream, basic_is...
-#include <locale>             // for isspace, locale
-#include <map>                // for operator!=, operator==
-#include <memory>             // for shared_ptr, make_shared
-#include <mutex>              // for mutex
-#include <nlohmann/json.hpp>  // for basic_json
-#include <numeric>            // for iota
-#include <regex>              // for regex_match, match_results, regex
-#include <sstream>            // for istringstream
-#include <sstream>            // for basic_istringstream
-#include <stdexcept>          // for runtime_error
-#include <string>             // for basic_string, char_traits, operator==
-#include <thread>             // for thread, sleep_for
+#include <iostream>          // for operator<<, basic_ostream, basic_is...
+#include <locale>            // for isspace, locale
+#include <map>               // for operator!=, operator==
+#include <memory>            // for shared_ptr, make_shared
+#include <mutex>             // for mutex
+#include <nlohmann/json.hpp> // for basic_json
+#include <numeric>           // for iota
+#include <regex>             // for regex_match, match_results, regex
+#include <sstream>           // for istringstream
+#include <sstream>           // for basic_istringstream
+#include <stdexcept>         // for runtime_error
+#include <string>            // for basic_string, char_traits, operator==
+#include <thread>            // for thread, sleep_for
+#include <unistd.h>
 #include <utility>
-#include <vector>  // for vector
+#include <vector> // for vector
 
 #include "cli.h"
 #include "debug.h"
-#include "file.h"    // for File
-#include "filter.h"  // for FileSets, FileVector
+#include "file.h"   // for File
+#include "filter.h" // for FileSets, FileVector
 #include "fmt/core.h"
-#include "nlohmann/json_fwd.hpp"  // for json
+#include "nlohmann/json_fwd.hpp" // for json
 #include "unistd.h"
 
 std::mutex animation_mutex;
@@ -62,7 +63,8 @@ void IO::animation(size_t sleep_time_milliseconds = 75) {
     for (const auto &ele : anim) {
       {
         const std::lock_guard<std::mutex> lock(animation_mutex);
-        if (processing_done) goto done;
+        if (processing_done)
+          goto done;
       }
       std::this_thread::sleep_for(std::chrono::milliseconds(t));
       std::cout << "\b" << ele << std::flush;
@@ -97,7 +99,8 @@ void IO::parse_input(FileSets &initial_file_sets, std::set<FileType> accepted) {
   while (std::getline(std::cin, line, '\0')) {
     FilePtr f = std::make_shared<File>(File{line});
     bool check_file = f->check_file_or_log(accepted);
-    if (check_file) file_vector.emplace_back(f);
+    if (check_file)
+      file_vector.emplace_back(f);
   }
   initial_file_sets.emplace_back(file_vector);
   num_files = initial_file_sets.at(0).size();
@@ -164,13 +167,15 @@ void IO::parse_file_list(std::string orig_string, std::vector<int> &file_list,
 
   // Remove spaces.
   for (const char &c : orig_string) {
-    if (!std::isspace(c, std::locale{})) string_without_space.push_back(c);
+    if (!std::isspace(c, std::locale{}))
+      string_without_space.push_back(c);
   }
   std::istringstream is(string_without_space);
 
   while (std::getline(is, token, ',')) {
     auto res = std::regex_match(token, sm, std::regex{R"((\d+)(-\d+)?)"});
-    if (!res) throw std::runtime_error("Unexpected input.");
+    if (!res)
+      throw std::runtime_error("Unexpected input.");
 
     if (sm[1].matched && !sm[2].matched) {
       assert(token == sm.str(1));
@@ -189,7 +194,8 @@ void IO::parse_file_list(std::string orig_string, std::vector<int> &file_list,
         throw std::runtime_error("Unexpected input.");
       }
 
-      for (int i = file_start; i <= file_end; ++i) file_list.push_back(i);
+      for (int i = file_start; i <= file_end; ++i)
+        file_list.push_back(i);
     }
   }
   std::sort(file_list.begin(), file_list.end());
@@ -212,7 +218,8 @@ void IO::sanitize_and_check_input(const std::string &str,
     if (!std::isprint(s))
       throw std::runtime_error("Non-printable character detected");
   }
-  if (str.empty()) throw std::runtime_error("Unexpected input.");
+  if (str.empty())
+    throw std::runtime_error("Unexpected input.");
 
   if (str == "all" || str == "a") {
     std::fill(keep_file_list.begin(), keep_file_list.end(), true);
@@ -257,12 +264,14 @@ void show_file_list(const FileVector &files,
 void remove_files(const FileVector &files, const std::vector<bool> &keep_files,
                   std::ofstream &of) {
   // dry_run but not run from cli.
-  if (dry_run && cxxopts_results.count("dry-run") == 0) return;
+  if (dry_run && cxxopts_results.count("dry-run") == 0)
+    return;
 
   // dry_run and run from cli.
   if (dry_run && cxxopts_results.count("dry-run") > 0) {
     for (size_t i = 0; i < files.size(); ++i) {
-      if (!keep_files.at(i)) of << files.at(i)->dir_entry << std::endl;
+      if (!keep_files.at(i))
+        of << files.at(i)->dir_entry << std::endl;
     }
     return;
   }
@@ -307,7 +316,7 @@ void IO::remove_file_io(const FileSets &file_sets, KeepFileSets &keep_file_sets,
     of = std::ofstream{output_file, std::ios::out};
   }
 
-  std::cout << "\n";  // Make sure that the animation doesn't interfere.
+  std::cout << "\n"; // Make sure that the animation doesn't interfere.
   for (size_t i = 0; i < file_sets.size(); ++i) {
     show_file_list(file_sets.at(i), keep_file_sets.at(i));
     std::string options = "[n]one, [a]ll.";
@@ -318,7 +327,8 @@ void IO::remove_file_io(const FileSets &file_sets, KeepFileSets &keep_file_sets,
     do {
       try {
         std::cout << ">>> ";
-        if (!std::getline(std::cin, files_to_keep_str, '\n')) std::abort();
+        if (!std::getline(std::cin, files_to_keep_str, '\n'))
+          std::abort();
         sanitize_and_check_input(files_to_keep_str, keep_file_sets.at(i));
         std::cout << "\n";
         show_file_list(file_sets.at(i), keep_file_sets.at(i), "    ");

@@ -1,18 +1,18 @@
-#include "filters_list.h"  // for xxhash, fs, file_size
+#include "filters_list.h" // for xxhash, fs, file_size
 
-#include <gtest/gtest.h>  // for TestInfo (ptr only), EXPECT_EQ, TEST_F
+#include <gtest/gtest.h> // for TestInfo (ptr only), EXPECT_EQ, TEST_F
 
 #include <exception>
-#include <filesystem>  // for recursive_directory_iterator, begin
+#include <filesystem> // for recursive_directory_iterator, begin
 #include <memory>
-#include <ostream>  // for operator<<
+#include <ostream> // for operator<<
 #include <string>
 
 #include "debug.h"
 
 using namespace std;
 class FiltersListTest : public testing::Test {
- protected:
+protected:
   // Remember that SetUp() is run immediately before a test starts.
   void SetUp() override {}
 

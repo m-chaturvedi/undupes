@@ -1,11 +1,11 @@
 #pragma once
-#include <stddef.h>  // for size_t
+#include <stddef.h> // for size_t
 
-#include <filesystem>  // for directory_entry
+#include <filesystem> // for directory_entry
 #include <fstream>
-#include <ostream>  // for ostream
+#include <ostream> // for ostream
 #include <set>
-#include <string>  // for basic_string, string
+#include <string> // for basic_string, string
 
 #include "debug.h"
 
@@ -30,7 +30,7 @@ std::ostream &operator<<(std::ostream &os, const FileType &obj);
  * could be a file/directory/symlink etc. like mentioned in the FileType class.
  */
 class File {
- public:
+public:
   fs::directory_entry dir_entry;
   explicit File(const std::string &path)
       : dir_entry{path}, file_type{this->get_file_type()} {}
@@ -42,7 +42,7 @@ class File {
 
   bool check_file_or_log(const std::set<FileType> &accepted) const;
 
- private:
+private:
   FileType file_type;
   friend std::ostream &operator<<(std::ostream &os, const File &obj);
   friend bool operator==(const File &l, const File &r);

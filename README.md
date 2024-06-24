@@ -1,20 +1,51 @@
+
+
+# Quick Actions
+
+### Installation
+
+There are no prerequisites libraries needed to be installed separately for `undupes`.  It has been tested with Ubuntu (24.04, 22.04, 20.04) and Debian (bookwom, buster).  So the usual cmake installation steps should work for those distros.
+
+```
+mkdir build
+cd build
+cmake ..
+make -j
+sudo make install
+```
+
+You could also use `bash -x install.sh` to do the installation.
+
+```
+$  undupes --help
+Remove duplicate files.
+Usage:
+  undupes [OPTION...]
+
+  -d, --delete       Delete duplicate files.
+  -m, --summary      Summary for the files found.
+  -y, --dry-run arg  Do a dry run (do not delete files). Pass a file to
+                     write to.
+  -h, --help         Print usage
+```
+
+
+
 # Find duplicates (Unix style)
 
-The purpose of this repo is to solve the problem of removing duplicate files in the Unix tradition (or my understanding of it at any rate).
-
-We try to see, how we can go about reproducing [fdupes](https://github.com/adrianlopezroche/fdupes)' functionality in the Unix tradition.
+The purpose of this repo is to solve the problem of removing duplicate files in our understanding of the Unix philosophy.  We try to see, how we can go about reproducing [fdupes](https://github.com/adrianlopezroche/fdupes)' functionality in the Unix tradition.
 
 ### Design
 
-The input to finddupes will be the file paths (absolute or relative to the current path) and the output will be the sets of files depending on some function. It could be a hash function, or size or just binary comparison. So, finddupes would be just splitting into sets of files. We could have multiple filters to findfupes, so that the sets can get smaller and smaller. For example, we could have first filter of a hash function, and the second one of binary comparison, or size.
+The input to `undupes` is the file paths (absolute or relative to the current path) and the output will be the sets of files depending on some function.
 
-The input to finddupes would be just a list of regular files.  We don't make it handle directories ans symlinks.  We do so because we have `find` for it.  One can specify `-L` for handling the links, and `-type f` for handling the files.  We do not want to solve an already solved problem.
+The input to `undupes` would be just a list of regular files or symlinks.  We don't make it handle symlinks especially.  We do so because we have `find` for it.  In the `find` command, one can specify `-L` for handling the links, and `-type f` for handling the files.  We do not want to solve an already solved problem.
 
 #### Input
 
-A list of  sets of files, where each set if separated by `\0\0` , and each file in a set if separated by `\0`.  We don't hadle directories or links.
+A list of  sets of files, where each set if separated by `\0` , and each file in a set if separated by `\0`.  We don't hadle directories or links.
 
-###### Style of Input
+###### File remove interaction
 
 Like the following:
 

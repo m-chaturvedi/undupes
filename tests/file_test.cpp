@@ -1,8 +1,8 @@
 #include "file.h"
 
-#include <gtest/gtest.h>  // for EXPECT_EQ, TestInfo (ptr only), TEST_F, Test
+#include <gtest/gtest.h> // for EXPECT_EQ, TestInfo (ptr only), TEST_F, Test
 
-#include <filesystem>  // for current_path, operator/, path, directory_entry
+#include <filesystem> // for current_path, operator/, path, directory_entry
 #include <fstream>
 #include <regex>
 
@@ -11,7 +11,7 @@
 
 using namespace std;
 class FileTest : public testing::Test {
- protected:
+protected:
   // Remember that SetUp() is run immediately before a test starts.
   void SetUp() override {}
 
@@ -25,7 +25,7 @@ class FileTest : public testing::Test {
   File broken_symlink_object_2{"artifacts/nested_broken_symlink_1"};
   File non_existent_object_1{"non_existent_file"};
   File nested_symlink_object_1{"artifacts/symlink_5"};
-  File sudo_file{"/etc/ssh/ssh_host_rsa_key"};
+  File sudo_file{"/etc/security/opasswd"};
 };
 
 TEST_F(FileTest, GetFileTypeTest) {
@@ -86,14 +86,20 @@ TEST_F(FileTest, CheckFileOrLog) {
   FileVector expected_files = {make_shared<File>(broken_symlink_object_1),
                                make_shared<File>(dir_object_1)};
   EXPECT_EQ(logged_files, expected_files);
-  EXPECT_FALSE(sudo_file.check_file_or_log(accepted));
+  const char *inside_docker = std::getenv("INSIDE_DOCKER");
+
+  if (inside_docker == nullptr || std::strcmp(inside_docker, "1")) {
+    EXPECT_FALSE(sudo_file.check_file_or_log(accepted));
+  }
   std::getline(spdlog_file, line, '\n');
   auto res = std::regex_search(
       line, sm,
       std::regex{
-          R"(\[\S+ \S+\] \[basic_logger\] \[warning\] Could not open file, skipping: /etc/ssh/ssh_host_rsa_key)"});
+          R"(\[\S+ \S+\] \[basic_logger\] \[warning\] Could not open file, skipping: /etc/security/opasswd)"});
 
-  EXPECT_TRUE(res);
+  if (inside_docker == nullptr || std::strcmp(inside_docker, "1")) {
+    EXPECT_TRUE(res);
+  }
   spdlog::set_default_logger(prev_logger);
   std::filesystem::remove(spdlog_test_file);
   spdlog_file.close();
