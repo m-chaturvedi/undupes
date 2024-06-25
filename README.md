@@ -2,8 +2,6 @@
 
 `undupes` attempts to solve the problem of finding duplicate files and deleting them if needed.  It tries to do so using by leveraging the Unix philosophy.
 
-
-
 # Quick Actions
 
 ### Installation
@@ -22,13 +20,37 @@ $ sudo ln -s /opt/undupes-<version>/bin/undupes /usr/local/bin/undupes
 
 Keeping all the files in `/opt`makes it easy to remove `undupes`.  In order to remove it you could just do: `rm -rf /opt/undupes-<version> /usr/local/bin/undupes` 
 
-
-
 I have not tested on the `rpm` based distros. Since there are almost no library dependencies which are a prerequisite, you should able to build from source for the `rpm` based distros.
 
+# Building from source
+
+There are no prerequisite libraries needed to be installed separately for `undupes`. It has been tested with Ubuntu (24.04, 22.04, 20.04) and Debian (bookworm, buster). So the usual cmake installation steps should work for at least those distros.
+
+```
+mkdir build
+cd build
+cmake ..
+make -j
+sudo make install # This would put the files is /usr/local by default.
+```
 
 
-### Using undupes
+
+# Using undupes
+
+```
+$  ./install/bin/undupes
+Remove duplicate files.
+Usage:
+  undupes [OPTION...]
+
+  -d, --delete       Delete duplicate files.
+  -m, --summary      Summary for the files found equal.
+  -y, --dry-run arg  Do a dry run (i.e. do not delete files). Pass a file
+                     to write to.
+  -h, --help         Print usage
+
+```
 
 ##### Finding duplicate files and outputting them in json format.
 
@@ -56,36 +78,9 @@ find $HOME/my_dir1 -type f -print0 | undupes -d --dry-run dry_run_file.txt
 find $HOME/my_dir1 $HOME/my_dir2 -type f -print0 | undupes -m
 ```
 
-
-
-### Building from source
-
-There are no prerequisite libraries needed to be installed separately for `undupes`.  It has been tested with Ubuntu (24.04, 22.04, 20.04) and Debian (bookworm, buster).  So the usual cmake installation steps should work for at least those distros.
-
-```
-mkdir build
-cd build
-cmake ..
-make -j
-sudo make install # This would put the files is /usr/local by default.
-```
-
-```
-$  undupes --help
-Remove duplicate files.
-Usage:
-  undupes [OPTION...]
-
-  -d, --delete       Delete duplicate files.
-  -m, --summary      Summary for the files found equal.
-  -y, --dry-run arg  Do a dry run (i.e. do not delete files). Pass a file to
-                     write to.
-  -h, --help         Print usage
-```
-
 # Philosophy
 
-The purpose of this repo is to solve the problem of removing duplicate files in our understanding of the Unix philosophy.  We try to see, how we can go about reproducing [fdupes](https://github.com/adrianlopezroche/fdupes)' functionality in the Unix tradition.  We write a small program, and leverage the Unix philosophy to get features that fdupes supports.
+The purpose of this repo is to solve the problem of removing duplicate files using our understanding of the Unix philosophy.  We try to see, how we can go about reproducing [fdupes](https://github.com/adrianlopezroche/fdupes)' functionality in the Unix tradition.  We write a small program, and leverage the Unix philosophy to get features that fdupes supports.   We also would like to promote `find` command because [we find it very powerful]([find(1) - Linux manual page](https://www.man7.org/linux/man-pages/man1/find.1.html).
 
 #### Design
 
@@ -95,7 +90,7 @@ The accepted input to `undupes` can be a list of regular files, symlinks or hard
 
 #### Input
 
-A list of  files, where each file is separated by `\0` , and each file in a set if separated by `\0`.  I chose `\0` instead of whitespace because Linux can have even `\n` in file names and many tools on Linux like `sort`, `find`, `cut`, etc. already support `\0`.
+A list of  files, where each file is separated by `\0` , and each file in a set if separated by `\0`.  We chose `\0` instead of whitespace because Linux can have even `\n` in file names and many tools on Linux like `sort`, `find`, `cut`, etc. already support `\0`.
 
 ###### File remove interaction
 
@@ -109,7 +104,7 @@ Specify comma or dash separated values for files to keep (ex: 1,2,3-4). [n]one, 
 >>>
 ```
 
-The `+` 's indicate that by default all the files would be kept.  I tried to stick to the io style of j/f-dupes, to reduce the cognitive load of learning a new io style.
+The `+` 's indicate that by default all the files would be kept.  We try to stick to the io style of j/f-dupes, to reduce the cognitive load of learning a new io style.
 
 ### Supporting fdupes' functionality
 
