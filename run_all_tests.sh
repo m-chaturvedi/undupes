@@ -2,6 +2,7 @@
 set -euo pipefail
 
 BUILD_DIR=${BUILD_DIR:-build}
+INSIDE_DOCKER=${INSIDE_DOCKER:-0}
 
 if ! [[ -d ${BUILD_DIR} ]]; then
 	BUILD_TYPE="Debug" bash build.sh
@@ -10,7 +11,7 @@ else
 	if [[ ${INSIDE_DOCKER} -eq 1 ]]; then
 		make -j
 	else
-		ninja
+		ninja install
 	fi
 	popd
 fi

@@ -102,7 +102,7 @@ function dry_run_test() {
 
 function warnings_test() {
 	find tests/artifacts -print0 |
-		~/workspace/undupe/build/src/undupes -m 2>${TMP_DIR}/warnings_test.out
+		${UNDUPES} -m 2>${TMP_DIR}/warnings_test.out
 	cat ${TMP_DIR}/warnings_test.out | cut -f16 -d' ' >${TMP_DIR}/warning_file_names.out
 
 	find tests/artifacts -type d >${TMP_DIR}/artifacts_dir_names.txt
@@ -113,6 +113,21 @@ function warnings_test() {
 		<(cat ${TMP_DIR}/artifacts_dir_names.txt | sort)
 }
 
+function timeout_test() {
+	sleep 10 | ${UNDUPES} >${TMP_DIR}/timeout.stdout 2>${TMP_DIR}/timeout.stderr
+	if [[ $(cat ${TMP_DIR}/timeout.stdout) != "" ]]; then false; fi
+	stderr_content=$(
+		cat <<EOF
+Timeout occurred.
+terminate called without an active exception
+EOF
+	)
+
+	if [[ $(cat ${TMP_DIR}/timeout.stderr) != "$stderr_content" ]]; then false; fi
+
+}
+
+// timeout_test
 vanilla_test
 summary_test
 test_with_j_f_dupes

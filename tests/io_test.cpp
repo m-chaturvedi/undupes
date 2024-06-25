@@ -338,7 +338,7 @@ TEST_F(IOTest, ParseInputTest) {
 
   // Directories or broken symlinks or symlinks to directories.
   FileVector to_remove = {
-      F("artifacts/"),
+      F("artifacts"),
       F("artifacts/symlink_3"),
       F("artifacts/dir_3"),
       F("artifacts/broken_symlink_1"),
@@ -354,6 +354,7 @@ TEST_F(IOTest, ParseInputTest) {
   };
 
   auto cin_buff = std::cin.rdbuf();
+  // find artifacts f,l -print0 > /home/chaturvedi/workspace/undupe/tests/io/parse_input.in
   std::ifstream tty_in("io/parse_input.in");
   std::cin.rdbuf(tty_in.rdbuf());
 
