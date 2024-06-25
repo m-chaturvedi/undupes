@@ -80,7 +80,7 @@ find $HOME/my_dir1 $HOME/my_dir2 -type f -print0 | undupes -m
 
 # Philosophy
 
-The purpose of this repo is to solve the problem of removing duplicate files using our understanding of the Unix philosophy.  We try to see, how we can go about reproducing [fdupes](https://github.com/adrianlopezroche/fdupes)' functionality in the Unix tradition.  We write a small program, and leverage the Unix philosophy to get features that fdupes supports.   We also would like to promote `find` command because [we find it very powerful]([find(1) - Linux manual page](https://www.man7.org/linux/man-pages/man1/find.1.html).
+The purpose of this repo is to solve the problem of removing duplicate files using our understanding of the Unix philosophy.  We try to see, how we can go about reproducing [fdupes](https://github.com/adrianlopezroche/fdupes)' functionality in the Unix tradition.  We write a small program, and leverage the Unix philosophy to get features that fdupes supports.   We also would like to promote `find` command because [we find it very powerful](https://www.man7.org/linux/man-pages/man1/find.1.html).
 
 #### Design
 
