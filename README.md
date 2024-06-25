@@ -1,3 +1,9 @@
+# Welcome to undupes' repository
+
+`undupes` attempts to solve the problem of finding duplicate files and deleting them if needed.  It tries to do so using by leveraging the Unix philosophy.
+
+
+
 # Quick Actions
 
 ### Installation
@@ -18,7 +24,7 @@ Keeping all the files in `/opt`makes it easy to remove `undupes`.  In order to r
 
 
 
-I have not tested on the `rpm` based distros. Since there are almost no library dependencies, you should able to build from source for the `rpm` based distros.
+I have not tested on the `rpm` based distros. Since there are almost no library dependencies which are a prerequisite, you should able to build from source for the `rpm` based distros.
 
 
 
@@ -54,7 +60,7 @@ find $HOME/my_dir1 $HOME/my_dir2 -type f -print0 | undupes -m
 
 ### Building from source
 
-There are no prerequisite libraries needed to be installed separately for `undupes`.  It has been tested with Ubuntu (24.04, 22.04, 20.04) and Debian (bookwom, buster).  So the usual cmake installation steps should work for at least those distros.
+There are no prerequisite libraries needed to be installed separately for `undupes`.  It has been tested with Ubuntu (24.04, 22.04, 20.04) and Debian (bookworm, buster).  So the usual cmake installation steps should work for at least those distros.
 
 ```
 mkdir build
@@ -71,13 +77,13 @@ Usage:
   undupes [OPTION...]
 
   -d, --delete       Delete duplicate files.
-  -m, --summary      Summary for the files found.
-  -y, --dry-run arg  Do a dry run (do not delete files). Pass a file to
+  -m, --summary      Summary for the files found equal.
+  -y, --dry-run arg  Do a dry run (i.e. do not delete files). Pass a file to
                      write to.
   -h, --help         Print usage
 ```
 
-# Find duplicates (in Unix style)
+# Philosophy
 
 The purpose of this repo is to solve the problem of removing duplicate files in our understanding of the Unix philosophy.  We try to see, how we can go about reproducing [fdupes](https://github.com/adrianlopezroche/fdupes)' functionality in the Unix tradition.  We write a small program, and leverage the Unix philosophy to get features that fdupes supports.
 
@@ -85,11 +91,11 @@ The purpose of this repo is to solve the problem of removing duplicate files in 
 
 The input to `undupes` is the file paths (absolute or relative to the current path) and the output will be the sets of files which have the same content. 
 
-The accepted input to `undupes` can be a list of regular files, symlinks or hard-links. We don't make it handle symlinks especially,  because we have `find` for it.  In `find` command, one can specify `-L` for handling the symlinks, `-links` for handling hard-linkg, and `-type f` for handling the files. 
+The accepted input to `undupes` can be a list of regular files, symlinks or hard-links. We don't make it handle symlinks especially,  because we have `find` for it.  With `find` command, one can specify `-L` for handling the symlinks, `-links` for handling hard-links, and `-type f` for handling the files. 
 
 #### Input
 
-A list of  sets of files, where each set if separated by `\0` , and each file in a set if separated by `\0`.  We don't hadle directories or links.
+A list of  files, where each file is separated by `\0` , and each file in a set if separated by `\0`.  I chose `\0` instead of whitespace because Linux can have even `\n` in file names and many tools on Linux like `sort`, `find`, `cut`, etc. already support `\0`.
 
 ###### File remove interaction
 
@@ -102,6 +108,8 @@ Like the following:
 Specify comma or dash separated values for files to keep (ex: 1,2,3-4). [n]one, [a]ll.
 >>>
 ```
+
+The `+` 's indicate that by default all the files would be kept.  I tried to stick to the io style of j/f-dupes, to reduce the cognitive load of learning a new io style.
 
 ### Supporting fdupes' functionality
 
@@ -174,8 +182,6 @@ Here again, we can leverage the Unix philosophy and use `jq`.
 find $HOME/my_dir1 -type f -print0 | undupes | jq '.[].file_list[0]'
 ```
 
-##### Filter files based on permissions
+##### Ordering of files
 
-```
-find  -type f -print0 | undupes | 
-```
+The order of input is kept in the sets.  So if `A` and `B` are files with the same content and `A` occurs before `B` in the input to `undupes`, `A` will occur before `B` in the set as well.  

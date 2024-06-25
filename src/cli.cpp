@@ -21,9 +21,9 @@ void add_options(cxxopts::Options &options, int argc, char *argv[]) {
   options.add_options()
     ("d,delete", "Delete duplicate files.")
 
-    ("m,summary", "Summary for the files found.")
+    ("m,summary", "Summary for the files found equal.")
 
-    ("y,dry-run", "Do a dry run (do not delete files). Pass a file to write to.",
+    ("y,dry-run", "Do a dry run (i.e. do not delete files). Pass a file to write to.",
      cxxopts::value<std::string>())
 
     ("h,help", "Print usage")
