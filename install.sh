@@ -3,11 +3,11 @@ set -euo pipefail
 
 declare -r DISTRO_INFO="$(dpkg --print-architecture 2>/dev/null)_$(lsb_release -is 2>/dev/null)_$(lsb_release -cs 2>/dev/null)"
 
-declare -r INSTALL_PREFIX=${INSTALL_PREFIX:-"/usr/local"}
-declare -r UNDUPES="${INSTALL_PREFIX}/bin/undupes"
 declare -r BUILD_DIR="${BUILD_DIR:-${PWD}/build}"
+declare -r INSTALL_PREFIX=${INSTALL_PREFIX:-"${BUILD_DIR}/install"}
+declare -r PACKAGES_DIR="${PACKAGES_DIR:-${PWD}/_packages}"
 
-export UNDUPES
+export UNDUPES="${INSTALL_PREFIX}/bin/undupes"
 
 cmake \
 	-DCMAKE_CXX_COMPILER=/usr/bin/g++ \
@@ -28,3 +28,6 @@ bash -x run_all_tests.sh
 pushd ${BUILD_DIR}
 cpack -G DEB undupes
 popd
+
+dpkg -i ${PACKAGES_DIR}/*${DISTRO_INFO}.deb
+UNDUPES=$(find /opt -type f -name undupes) bash -x run_all_tests.sh

@@ -100,10 +100,24 @@ function dry_run_test() {
 	diff <(ls -1 tests/artifacts/dir_3) <(ls -1 ${TMP_DIR}/dir_3)
 }
 
+function warnings_test() {
+	find tests/artifacts -print0 |
+		~/workspace/undupe/build/src/undupes -m 2>${TMP_DIR}/warnings_test.out
+	cat ${TMP_DIR}/warnings_test.out | cut -f16 -d' ' >${TMP_DIR}/warning_file_names.out
+
+	find tests/artifacts -type d >${TMP_DIR}/artifacts_dir_names.txt
+	echo "tests/artifacts/broken_symlink_1" >>${TMP_DIR}/artifacts_dir_names.txt
+	echo "tests/artifacts/nested_broken_symlink_1" >>${TMP_DIR}/artifacts_dir_names.txt
+	echo "tests/artifacts/symlink_3" >>${TMP_DIR}/artifacts_dir_names.txt
+	diff <(cat ${TMP_DIR}/warning_file_names.out | sort) \
+		<(cat ${TMP_DIR}/artifacts_dir_names.txt | sort)
+}
+
 vanilla_test
 summary_test
 test_with_j_f_dupes
 delete_test
 dry_run_test
+warnings_test
 
 echo "Tests passed."
