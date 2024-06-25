@@ -38,7 +38,7 @@ bool dry_run{false};
 size_t num_files;
 
 using json = nlohmann::json;
-std::shared_ptr<std::thread> animation_thread;
+std::shared_ptr<std::thread> animation_thread{};
 extern cxxopts::ParseResult cxxopts_results;
 
 /**
@@ -75,7 +75,7 @@ void IO::end_animation() {
     const std::lock_guard<std::mutex> lock(animation_mutex);
     processing_done = true;
   }
-  if (animation_thread->joinable()) {
+  if (animation_thread != nullptr && animation_thread->joinable()) {
     animation_thread->join();
   }
 }

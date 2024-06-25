@@ -127,7 +127,7 @@ EOF
 
 }
 
-// timeout_test
+# timeout_test
 vanilla_test
 summary_test
 test_with_j_f_dupes
