@@ -1,6 +1,6 @@
 # Welcome to undupes' repository
 
-`undupes` attempts to solve the problem of finding duplicate files and deleting them if needed.  It tries to do so using by leveraging the Unix philosophy.
+`undupes` attempts to solve the problem of finding duplicate files and deleting them if needed.  It tries to do so by leveraging the Unix philosophy.
 
 # Quick Actions
 
@@ -20,7 +20,7 @@ $ sudo ln -s /opt/undupes-<version>/bin/undupes /usr/local/bin/undupes
 
 Keeping all the files in `/opt`makes it easy to remove `undupes`.  In order to remove it you could just do: `rm -rf /opt/undupes-<version> /usr/local/bin/undupes` 
 
-I have not tested on the `rpm` based distros. Since there are almost no library dependencies which are a prerequisite, you should able to build from source for the `rpm` based distros.
+We have not tested on the `rpm` based distros. Since there are almost no library dependencies which are a prerequisite, you should able to build from source for the `rpm` based distros.
 
 # Building from source
 
@@ -37,7 +37,7 @@ sudo make install # This would put the files is /usr/local by default.
 # Using undupes
 
 ```
-$  ./install/bin/undupes
+$  undupes --help
 Remove duplicate files.
 Usage:
   undupes [OPTION...]
@@ -77,7 +77,7 @@ find $HOME/my_dir1 $HOME/my_dir2 -type f -print0 | undupes -m
 
 # Philosophy
 
-The purpose of this repo is to solve the problem of removing duplicate files using our understanding of the Unix philosophy.  We try to see, how we can go about reproducing [fdupes](https://github.com/adrianlopezroche/fdupes)' functionality in the Unix tradition.  We write a small program, and leverage the Unix philosophy to get features that fdupes supports.   We also would like to promote `find` command because [we find it very powerful](https://www.man7.org/linux/man-pages/man1/find.1.html).
+The purpose of this repo is to solve the problem of removing duplicate files using our understanding of the Unix philosophy.  We try to see, how we can go about reproducing [fdupes](https://github.com/adrianlopezroche/fdupes)' functionality in the Unix tradition.  We write a small program, and leverage the Unix philosophy to get features that fdupes supports.   We also would like to promote the `find` command because [we find it very powerful](https://www.man7.org/linux/man-pages/man1/find.1.html).
 
 #### Design
 
