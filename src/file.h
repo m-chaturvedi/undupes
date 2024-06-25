@@ -32,8 +32,9 @@ std::ostream &operator<<(std::ostream &os, const FileType &obj);
 class File {
 public:
   fs::directory_entry dir_entry;
+  size_t index;
   explicit File(const std::string &path)
-      : dir_entry{path}, file_type{this->get_file_type()} {}
+      : dir_entry{path}, index{}, file_type{this->get_file_type()} {}
   FileType get_file_type() const;
   std::string get_path() const;
 

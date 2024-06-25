@@ -13,12 +13,16 @@ namespace IO {
 void animation(size_t sleep_time_milliseconds);
 void end_animation();
 void parse_input(FileSets &initial_file_sets,
-                 std::set<FileType> accepted = {FileType::symlinked_file,
-                                                FileType::regular_file});
+                 const std::set<FileType> &accepted = {FileType::symlinked_file,
+                                                       FileType::regular_file});
 
 void remove_file_io(const FileSets &file_sets, KeepFileSets &keep_file_sets,
                     std::string input_dev = "/dev/tty",
                     std::string output_dev = "/dev/tty");
+
+void show_file_list(const FileVector &orig_files,
+                    const std::vector<bool> &keep_files,
+                    std::string indent = "");
 
 void get_matches(const std::regex &reg, const std::string &S,
                  std::vector<std::string> &result);

@@ -127,6 +127,12 @@ EOF
 
 }
 
+function sorting_test() {
+	find tests/artifacts/dir_3 -type f -print0 | sort -z |
+		${UNDUPES} >${TMP_DIR}/sorted.out
+	diff ${TMP_DIR}/sorted.out tests/io/sorted_file_io_test1.out
+}
+
 # timeout_test
 vanilla_test
 summary_test
@@ -134,5 +140,6 @@ test_with_j_f_dupes
 delete_test
 dry_run_test
 warnings_test
+sorting_test
 
 echo "Tests passed."

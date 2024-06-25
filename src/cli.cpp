@@ -1,8 +1,9 @@
 #include "cli.h"
 
+#include <unistd.h>
+
 #include <iostream>
 #include <string>
-#include <unistd.h>
 
 #include "cxxopts.hpp"
 
@@ -56,6 +57,9 @@ void check_options() {
   if (cxxopts_results.count("help") &&
       (cxxopts_results.count("delete") || cxxopts_results.count("summary") ||
        cxxopts_results.count("dry-run")))
+    throw std::runtime_error("Incompatible options.");
+
+  if (cxxopts_results.count("dry-run") && !cxxopts_results.count("delete"))
     throw std::runtime_error("Incompatible options.");
 
   if (cxxopts_results.count("dry-run")) {

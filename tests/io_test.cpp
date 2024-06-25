@@ -19,16 +19,16 @@ extern bool processing_done;
 using namespace std;
 
 class IOTest : public testing::Test {
-protected:
+ protected:
   // Remember that SetUp() is run immediately before a test starts.
   void SetUp() override {
     iota(expected_file_list.begin(), expected_file_list.end(), 1);
     read_dir("artifacts/dir_2", file_sets_dir_2);
     read_dir("artifacts/dir_3", file_sets_dir_3);
 
-    fs::copy("artifacts/dir_3", "/tmp/dir_3.copy",
-             fs::copy_options::overwrite_existing |
-                 fs::copy_options::recursive);
+    fs::copy(
+        "artifacts/dir_3", "/tmp/dir_3.copy",
+        fs::copy_options::overwrite_existing | fs::copy_options::recursive);
     auto ms = [](const std::string &file_name) {
       return std::make_shared<File>("artifacts/dir_3/" + file_name);
     };
@@ -65,9 +65,9 @@ protected:
 
   // TearDown() is invoked immediately after a test finishes.
   void TearDown() override {
-    fs::copy("/tmp/dir_3.copy", "artifacts/dir_3",
-             fs::copy_options::overwrite_existing |
-                 fs::copy_options::recursive);
+    fs::copy(
+        "/tmp/dir_3.copy", "artifacts/dir_3",
+        fs::copy_options::overwrite_existing | fs::copy_options::recursive);
   }
   // https://stackoverflow.com/a/39560347/873956
   vector<int> expected_file_list = std::vector<int>(10);
@@ -125,11 +125,14 @@ void check_exceptions_parse_file_test(const string &s) {
 // https://stackoverflow.com/a/2602258/873956
 bool files_eq(const string &A, const string &B) {
   std::ifstream is_A(A.c_str()), is_B(B.c_str());
+  if (!is_A.is_open() || !is_B.is_open()) return false;
   std::stringstream buffer_A, buffer_B;
   buffer_A << is_A.rdbuf();
   buffer_B << is_B.rdbuf();
   is_A.close();
   is_B.close();
+  // IC(buffer_A.str());
+  // IC(buffer_B.str());
   return buffer_A.str() == buffer_B.str();
 }
 
@@ -354,7 +357,8 @@ TEST_F(IOTest, ParseInputTest) {
   };
 
   auto cin_buff = std::cin.rdbuf();
-  // find artifacts f,l -print0 > /home/chaturvedi/workspace/undupe/tests/io/parse_input.in
+  // find artifacts f,l -print0 >
+  // /home/chaturvedi/workspace/undupe/tests/io/parse_input.in
   std::ifstream tty_in("io/parse_input.in");
   std::cin.rdbuf(tty_in.rdbuf());
 
@@ -404,4 +408,31 @@ TEST_F(IOTest, ParseInputTest) {
   artifacts_file_sets.clear();
   artifacts_file_sets.push_back(fv);
   EXPECT_EQ(file_sets, artifacts_file_sets);
+}
+
+TEST_F(IOTest, ShowFileListTest) {
+  EXPECT_EQ(file_sets_dir_3.size(), 1);
+
+  auto ms = [](const std::string &file_name, const size_t index) {
+    FilePtr fp = std::make_shared<File>("artifacts/dir_3/" + file_name);
+    fp->index = index;
+    return fp;
+  };
+  auto cout_buff = std::cout.rdbuf();
+  std::ofstream custom_cout("show_file_list.out");
+  std::cout.rdbuf(custom_cout.rdbuf());
+
+  FileVector fv = {
+      ms("1KB_1", 4),         ms("1KB_1.copy.1", 2),  ms("1KB_1.copy.2", 1),
+      ms("1KB_1.copy.3", 3),  ms("1KB_2", 5),         ms("1KB_2.copy.1", 8),
+      ms("1KB_2.copy.2", 7),  ms("1KB_2.copy.3", 6),  ms("3KB_1", 11),
+      ms("3KB_1.copy.1", 10), ms("3KB_1.copy.2", 9),  ms("3KB_1.copy.3", 12),
+      ms("4KB_1", 15),        ms("4KB_1.copy.1", 16), ms("4KB_1.copy.2", 14),
+      ms("4KB_1.copy.3", 13), ms("4KB_1.copy.4", 17), ms("4KB_1.copy.5", 18),
+  };
+  std::vector<bool> keep_files(fv.size(), true);
+  IO::show_file_list(fv, keep_files);
+  custom_cout.close();
+  std::cout.rdbuf(cout_buff);
+  EXPECT_TRUE(files_eq("io/show_file_list.out", "show_file_list.out"));
 }
