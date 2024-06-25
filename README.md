@@ -34,8 +34,6 @@ make -j
 sudo make install # This would put the files is /usr/local by default.
 ```
 
-
-
 # Using undupes
 
 ```
@@ -49,7 +47,6 @@ Usage:
   -y, --dry-run arg  Do a dry run (i.e. do not delete files). Pass a file
                      to write to.
   -h, --help         Print usage
-
 ```
 
 ##### Finding duplicate files and outputting them in json format.
@@ -92,7 +89,7 @@ The accepted input to `undupes` can be a list of regular files, symlinks or hard
 
 A list of  files, where each file is separated by `\0` , and each file in a set if separated by `\0`.  We chose `\0` instead of whitespace because Linux can have even `\n` in file names and many tools on Linux like `sort`, `find`, `cut`, etc. already support `\0`.
 
-###### File remove interaction
+#### File remove interaction
 
 Like the following:
 
