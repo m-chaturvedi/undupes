@@ -75,10 +75,24 @@ std::ostream &operator<<(std::ostream &os, const File &obj) {
   return os;
 }
 
+/**
+ * @brief Equality operator for File class
+ *
+ * @param l File on the left of the =
+ * @param r File on the right of the =
+ *
+ * @return true if the files are equal and false otherwise.
+ */
 bool operator==(const File &l, const File &r) {
   return fs::absolute(l.dir_entry.path()) == fs::absolute(r.dir_entry.path());
 }
 
+/**
+ * @brief Gets the resolved path for a symlink.
+ *
+ * @return A directory_entry after resolving the path and an exception
+ * otherwise.
+ */
 fs::directory_entry File::get_resolved_dir_entry() const {
   fs::path resolved_path;
   try {
@@ -90,8 +104,21 @@ fs::directory_entry File::get_resolved_dir_entry() const {
   return fs::directory_entry(resolved_path);
 }
 
+/**
+ * @brief Get the file path string.
+ *
+ * @return A string containing the path for the dir_entry
+ */
 std::string File::get_path() const { return this->dir_entry.path().string(); }
 
+/**
+ * @brief Check whether a file is a file or a symlink pointing to a file.
+ *
+ * @param accepted A set of FileTypes.
+ *
+ * @return true if the file is of the accepted type, false otherwise and create
+ * an spdlog.
+ */
 bool File::check_file_or_log(const std::set<FileType> &accepted) const {
   if (accepted.find(this->get_file_type()) == accepted.end()) {
     spdlog::warn("Path not a file or a symlink to a file, skipping: {}",

@@ -21,12 +21,12 @@ declare -a IMAGE_LIST=(
 )
 
 for image in ${IMAGE_LIST[@]}; do
-	undupe_image=${image}_undupe
-	if [[ $(docker images -q ${undupe_image} | wc -l) -ne 1 ]]; then
-		docker build --tag ${undupe_image} --build-arg="IMAGE_NAME=${image}" .
+	undupes_image=${image}_undupes
+	if [[ $(docker images -q ${undupes_image} | wc -l) -ne 1 ]]; then
+		docker build --tag ${undupes_image} --build-arg="IMAGE_NAME=${image}" .
 	fi
 
-	docker run --rm --env BUILD_DIR -v $PWD:/undupe -it ${undupe_image} \
+	docker run --rm --env BUILD_DIR -v $PWD:/undupes -it ${undupes_image} \
 		bash -c 'rm -rf ${BUILD_DIR}; bash -x install.sh;'
 done
 

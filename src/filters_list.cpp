@@ -17,6 +17,16 @@
 
 namespace fs = std::filesystem;
 
+/**
+ * @brief Convert the hash returned by xxhash to a string same as what is
+ * returned by the command `xxh128sum a.txt`. This is what is recommended by
+ * the xxhash repository.
+ * //
+ * https://github.com/Cyan4973/xxHash/blob/805c00b68fa754200ada0c207ffeaa7a4409377c/cli/xxhsum.c#L243
+ *
+ * @param hash The XXH128_hash_t object returned by xxhash algorithm.
+ * @param str The string to write the hash to.
+ */
 void convert_xxh128_hash_to_string(XXH128_hash_t hash, std::string &str) {
   std::ostringstream os;
   XXH128_canonical_t cano;
@@ -27,12 +37,27 @@ void convert_xxh128_hash_to_string(XXH128_hash_t hash, std::string &str) {
   str = os.str();
 }
 
+/**
+ * @brief Get the size of the file pointed to by the FilePtr.
+ *
+ * @param a The FilePtr object to calculate hash
+ *
+ * @return The size of the file.
+ */
 size_t FiltersList::file_size(const FilePtr a) {
   size_t size_a = fs::file_size((a->get_resolved_dir_entry()).path());
   return size_a;
 }
 
-// https://github.com/Cyan4973/xxHash/blob/805c00b68fa754200ada0c207ffeaa7a4409377c/cli/xxhsum.c#L243
+/**
+ * @brief Calculate the hash of the first 4KB of file.  This helps us speed up.
+ * JDupes does something similar.  Instead of calcualting the hash of the whole
+ * we just calculate the hash of the first 4KB.
+ *
+ * @param file The FilePtr object
+ *
+ * @return The xxhash calculated for the first 4KB of the file.
+ */
 std::string FiltersList::xxhash_4KB(const FilePtr file) {
   XXH3_state_t state3;
   XXH128_hash_t hash;
@@ -65,6 +90,13 @@ std::string FiltersList::xxhash_4KB(const FilePtr file) {
   return hash_str;
 }
 
+/**
+ * @brief Calculate the xxhash for the file.
+ *
+ * @param file The FilePtr object to get the hash for.
+ *
+ * @return The 128 byte XXHash for the file.
+ */
 std::string FiltersList::xxhash(const FilePtr file) {
   constexpr size_t block_size = 64 * (1 << 10);
   void *const buffer = malloc(block_size);

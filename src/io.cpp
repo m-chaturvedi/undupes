@@ -246,8 +246,8 @@ void IO::sanitize_and_check_input(const std::string &str,
  * @param indent The indentation to be printed before the information.
  */
 void IO::show_file_list(const FileVector &orig_files,
-                    const std::vector<bool> &keep_files,
-                    std::string indent) {
+                        const std::vector<bool> &keep_files,
+                        std::string indent) {
   FileVector files = orig_files;
   std::sort(files.begin(), files.end(), [](const FilePtr &a, const FilePtr &b) {
     return a->index < b->index;

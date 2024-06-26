@@ -1,7 +1,7 @@
 ARG IMAGE_NAME
 FROM "${IMAGE_NAME}"
 SHELL ["/bin/bash", "-c"]
-WORKDIR /undupe
+WORKDIR /undupes
 ENV INSIDE_DOCKER=1
 
 RUN apt-get update && \

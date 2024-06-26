@@ -20,8 +20,17 @@ using std::chrono::milliseconds;
 extern bool dry_run;
 extern cxxopts::ParseResult cxxopts_results;
 
-void apply_three_common_filters(const FileSets &file_sets, FileSets &result,
-                                bool print = true) {
+/**
+ * @brief Calculates the four common filters for the files.  size, xxash for
+ * first 4KB, and the xxhash of the whole file. Then it goes ahead and compares
+ * files byte by byte
+ *
+ * @param file_sets The FileSets to apply filters to.
+ * @param result The resulting FileSets object after applyint the filter.
+ * @param print Whether or not to print the FileSets object in json format.
+ */
+void apply_four_common_filters(const FileSets &file_sets, FileSets &result,
+                               bool print = true) {
   HashableFilter filter_1{file_sets, FiltersList::file_size};
   HashableFilter filter_2{filter_1.new_file_sets, FiltersList::xxhash_4KB};
   HashableFilter filter_3{filter_2.new_file_sets, FiltersList::xxhash};
@@ -33,11 +42,9 @@ void apply_three_common_filters(const FileSets &file_sets, FileSets &result,
   auto t2 = high_resolution_clock::now();
   spdlog::info("Bin comparison time: {}",
                (duration<double, std::milli>{t2 - t1}).count());
-  if (print)
-    IO::print_json(filter_4.new_file_sets);
+  if (print) IO::print_json(filter_4.new_file_sets);
 #else
-  if (print)
-    IO::print_json(filter_2.new_file_sets);
+  if (print) IO::print_json(filter_2.new_file_sets);
 #endif
   result = std::move(filter_3.new_file_sets);
 }
@@ -66,11 +73,10 @@ int main(int argc, char *argv[]) {
   FileSets input_file_sets, resulting_file_sets;
   IO::parse_input(input_file_sets);
 
-  if (cxxopts_results.count("dry-run"))
-    dry_run = true;
+  if (cxxopts_results.count("dry-run")) dry_run = true;
 
   if (cxxopts_results.count("delete")) {
-    apply_three_common_filters(input_file_sets, resulting_file_sets, false);
+    apply_four_common_filters(input_file_sets, resulting_file_sets, false);
     if (!resulting_file_sets.empty()) {
       KeepFileSets kps(resulting_file_sets.size());
       for (size_t i = 0; i < resulting_file_sets.size(); ++i) {
@@ -80,10 +86,10 @@ int main(int argc, char *argv[]) {
       IO::remove_file_io(resulting_file_sets, kps);
     }
   } else if (cxxopts_results.count("summary")) {
-    apply_three_common_filters(input_file_sets, resulting_file_sets, false);
+    apply_four_common_filters(input_file_sets, resulting_file_sets, false);
     IO::print_summary(resulting_file_sets);
   } else {
-    apply_three_common_filters(input_file_sets, resulting_file_sets, true);
+    apply_four_common_filters(input_file_sets, resulting_file_sets, true);
   }
   return 0;
 }

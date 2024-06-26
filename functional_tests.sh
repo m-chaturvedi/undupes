@@ -130,7 +130,7 @@ EOF
 function sorting_test() {
 	find tests/artifacts/dir_3 -type f -print0 | sort -z |
 		${UNDUPES} >${TMP_DIR}/sorted.out
-	diff ${TMP_DIR}/sorted.out tests/io/sorted_file_io_test1.out
+	diff ${TMP_DIR}/sorted.out tests/io/sorted_file_list.out
 }
 
 # timeout_test
