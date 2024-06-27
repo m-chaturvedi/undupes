@@ -1,6 +1,8 @@
 # Welcome to undupes' repository
 
 `undupes` attempts to solve the problem of finding duplicate files and deleting them if needed.  It tries to do so by leveraging the Unix philosophy.
+Doing this lets `undupes` leverage all the abilities of the `find` command.  `find` has a lot of options that can be used to filter files and `undupes`
+due to its design lets the user use them instead of reimplementing some of them inside of `undupes`.
 
 # Quick Actions
 
