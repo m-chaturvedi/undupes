@@ -1,1 +1,12 @@
-gitignore_me*
+*.swp
+/.ccls-cache/
+/.vscode/
+/Testing/
+/__pycache__/
+/_packages/
+/compile_commands.json
+/cppcheck.txt
+/gmon.out
+/include-what-you-use.txt
+build*/
+gitignore_me_*

@@ -35,4 +35,5 @@ RUN apt-get update && \
         jq \
         python3 \
         socat \
+        wget \
       && rm -rf /var/lib/apt/lists/*
