@@ -1,0 +1,42 @@
+#!/bin/bash
+set -euo pipefail -o errtrace
+
+declare -r UNDUPES_VERSION=${UNDUPES_VERSION:-1.0.0}
+declare -r TMP_DIR=$(mktemp -d /tmp/deb_install-XXXXX)
+
+function cleanup() {
+	declare -i ret_code=$?
+	if [[ $ret_code -ne 0 ]]; then
+		echo "Installation failed."
+	fi
+	rm -rf ${TMP_DIR}
+}
+
+trap 'cleanup' EXIT
+
+function check_os_type() {
+	if [[ $OSTYPE != "linux-gnu" ]]; then
+		echo "Prebuilt-binaries not available for the OS.  Try building from source."
+	fi
+}
+
+function check_root() {
+	if [[ $EUID -ne 0 ]]; then
+		echo "Run with superuser privilages, please."
+		exit 1
+	fi
+}
+
+function get_details() {
+	ARCH=$(dpkg --print-architecture 2>/dev/null)
+	DISTRO_NAME=$(lsb_release -is 2>/dev/null)
+	DISTRO_CODENAME=$(lsb_release -cs 2>/dev/null)
+	FULL_NAME=undupes_${UNDUPES_VERSION}_${ARCH}_${DISTRO_NAME}_${DISTRO_CODENAME}.deb
+}
+
+check_os_type
+check_root
+get_details
+
+wget -q "https://github.com/m-chaturvedi/undupes/releases/download/${UNDUPES_VERSION}/${FULL_NAME}" -O ${TMP_DIR}/${FULL_NAME}
+dpkg -i ${TMP_DIR}/${FULL_NAME}
