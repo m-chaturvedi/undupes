@@ -47,8 +47,11 @@ for image in ${IMAGE_LIST[@]}; do
 	docker run --rm --env BUILD_DIR -v $PWD:/undupes -it ${undupes_image} \
 		bash -c 'rm -rf ${BUILD_DIR}; bash -x install.sh;'
 
-	docker run --rm --env UNDUPES_VERSION -it ${undupes_image} \
-		bash -c 'wget https://raw.githubusercontent.com/m-chaturvedi/undupes/blob/${UNDUPES_VERSION}/install_deb -O - | bash'
+	# Installing twice on purspose to check overwriting.
+	docker run --rm --env UNDUPES_VERSION -v $PWD:/undupes -it ${undupes_image} \
+		bash -c 'wget https://raw.githubusercontent.com/m-chaturvedi/undupes/master/install_deb -O - | bash && \
+			wget https://raw.githubusercontent.com/m-chaturvedi/undupes/master/install_deb -O - | bash && \
+		diff <(undupes) /undupes/tests/io/undupes_help.out'
 done
 
 echo "All tests passed. All packages built."

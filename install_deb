@@ -40,5 +40,5 @@ get_details
 
 wget -q "https://github.com/m-chaturvedi/undupes/releases/download/${UNDUPES_VERSION}/${FULL_NAME}" -O ${TMP_DIR}/${FULL_NAME}
 
-ln -s /opt/undupes-${UNDUPES_VERSION}/bin/undupes /usr/local/bin/undupes
+ln -fs /opt/undupes-${UNDUPES_VERSION}/bin/undupes /usr/local/bin/undupes
 dpkg -i ${TMP_DIR}/${FULL_NAME}

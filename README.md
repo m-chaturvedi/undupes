@@ -9,7 +9,13 @@ can be used which `fdupes` or `jdupes` may not support.
 
 ### Installation
 
-On the supported versions of Ubuntu and Debian, you could uses the `deb` files provided in the release section.  Please run:
+##### Using the installation script
+
+```
+wget https://raw.githubusercontent.com/m-chaturvedi/undupes/master/install_deb -O - | bash
+```
+
+##### Using the released deb files
 
 ```
 $ sudo dpkg -i undupes_<version>_<architecture>_<distro>_<distro_codename>.deb
