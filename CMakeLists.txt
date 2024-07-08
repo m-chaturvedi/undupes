@@ -1,3 +1,4 @@
+# clang-format off
 # Undupes: Find duplicate files.
 # Copyright (C) 2024 Mmanu Chaturvedi <mmanu.chaturvedi@gmail.com>
 #
@@ -16,6 +17,7 @@
 # Ubuntu:20.04 supports 3.16.3
 # SPDX-License-Identifier: AGPL-3.0
 # SPDX-FileCopyrightText: 2024 Mmanu Chaturvedi <mmanu.chaturvedi@gmail.com>
+# clang-format on
 cmake_minimum_required(VERSION 3.16.3)
 project(
   undupes

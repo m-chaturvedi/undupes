@@ -64,7 +64,12 @@ public:
       using ReturnType = typename std::invoke_result<Attr, FilePtr>::type;
       std::unordered_map<ReturnType, FileVector> M;
       for (auto &file : files) {
-        M[_attr(file)].push_back(file);
+        try {
+          M[_attr(file)].push_back(file);
+        } catch (const std::filesystem::filesystem_error &exp) {
+          spdlog::warn("Exception caught. \"{}\". Skipping file: {}",
+                       exp.what(), file->get_path());
+        }
       }
       for (auto const &[key, val] : M) {
         if (val.size() > 1)

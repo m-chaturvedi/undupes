@@ -1,3 +1,4 @@
+# clang-format off
 # Undupes: Find duplicate files.
 # Copyright (C) 2024 Mmanu Chaturvedi <mmanu.chaturvedi@gmail.com>
 #
@@ -15,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # SPDX-License-Identifier: AGPL-3.0
 # SPDX-FileCopyrightText: 2024 Mmanu Chaturvedi <mmanu.chaturvedi@gmail.com>
+# clang-format on
 add_executable(undupes main.cpp file.h)
 
 add_library(debug debug.h debug.cpp)
