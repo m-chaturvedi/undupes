@@ -12,7 +12,7 @@ can be used which `fdupes` or `jdupes` may not support.
 ##### Using the installation script
 
 ```
-wget https://raw.githubusercontent.com/m-chaturvedi/undupes/master/install_deb -O - | bash
+wget https://raw.githubusercontent.com/m-chaturvedi/undupes/master/install_deb -O - | sudo bash
 ```
 
 ##### Using the released deb files
