@@ -11,6 +11,8 @@ can be used which `fdupes` or `jdupes` may not support (for example, issues like
 
 ##### Using the installation script
 
+For the distros, Ubuntu (24.04, 22.04, 20.04) and Debian (bookworm, buster), you could to the following:
+
 ```
 wget https://raw.githubusercontent.com/m-chaturvedi/undupes/master/install_deb -qO - | sudo bash
 ```
